@@ -23,7 +23,7 @@ import NavItem from './NavItem';
 
 const items = [
   {
-    href: '/',
+    href: '/app/files',
     icon: BarChartIcon,
     title: '내폴더'
   },
