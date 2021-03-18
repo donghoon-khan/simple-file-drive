@@ -21,14 +21,12 @@ public class FileServiceImpl implements FileService {
 
             return stream
                     .sorted((p1, p2) -> Boolean.valueOf(Files.isDirectory(p2)).compareTo(Boolean.valueOf(Files.isDirectory(p1))))
-                    .map(file -> {
-                        FileType fileType = Files.isDirectory(file) ? FileType.DIRECTORY : FileType.FILE;
-                        return FileObject.builder()
-                            .type(fileType)
+                    .map(file -> FileObject.builder()
+                            .type(Files.isDirectory(file) ? FileType.DIRECTORY : FileType.FILE)
                             .name(file.getFileName().toString())
                             .path(file.toString())
-                            .build();
-                    })
+                            .build()
+                    )
                     .collect(Collectors.toList());
         }
     }
