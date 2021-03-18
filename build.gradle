@@ -24,6 +24,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation group: 'com.google.jimfs', name: 'jimfs', version: '1.1'
 }
 
 def webappDir = "$projectDir/frontend"

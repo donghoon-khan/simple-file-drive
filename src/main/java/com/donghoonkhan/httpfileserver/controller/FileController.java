@@ -16,19 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/directory")
-public class DirectoryController {
+@RequestMapping("/root")
+public class FileController {
     
     private final String rootDir;
     private final FileService fileService;
 
-    public DirectoryController(@Value("${rootDir}")String rootDir, FileService fileService) {
+    public FileController(@Value("${rootDir}")String rootDir, FileService fileService) {
         this.rootDir = rootDir;
         this.fileService = fileService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<FileObject>> getListAll() {
+    public ResponseEntity<List<FileObject>> listFilesAndDirectories() {
         try {
             return ResponseEntity.ok().body(fileService.getAllFilesAndDirectories(Paths.get(rootDir)));
         } catch (IOException e) {

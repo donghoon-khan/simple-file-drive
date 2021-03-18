@@ -9,4 +9,5 @@ import com.donghoonkhan.httpfileserver.model.FileObject;
 public interface FileService {
     
     public List<FileObject> getAllFilesAndDirectories(Path path) throws IOException;
+    
 }
