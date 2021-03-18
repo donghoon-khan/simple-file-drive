@@ -18,16 +18,18 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<FileObject> getAllFilesAndDirectories(Path path) throws IOException {
         try (Stream<Path> stream =  Files.list(path)) {
+
             return stream
-                .map(file -> {
-                    FileType fileType = Files.isDirectory(file) ? FileType.DIRECTORY : FileType.FILE;
-                    return FileObject.builder()
-                        .type(fileType)
-                        .name(file.getFileName().toString())
-                        .path(file.toString())
-                        .build();
-                })
-                .collect(Collectors.toList());
+                    .sorted((p1, p2) -> Boolean.valueOf(Files.isDirectory(p2)).compareTo(Boolean.valueOf(Files.isDirectory(p1))))
+                    .map(file -> {
+                        FileType fileType = Files.isDirectory(file) ? FileType.DIRECTORY : FileType.FILE;
+                        return FileObject.builder()
+                            .type(fileType)
+                            .name(file.getFileName().toString())
+                            .path(file.toString())
+                            .build();
+                    })
+                    .collect(Collectors.toList());
         }
     }
     
