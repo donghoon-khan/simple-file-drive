@@ -7,8 +7,8 @@ Application to HTTP File Server.
 
 ## Feature
 
-- [ ] List files
-- [ ] Create file(s)
-- [ ] Update file(s)
-- [ ] Delete file(s)
+- [ ] List files/directories
+- [ ] Create file/directory
+- [ ] Update file/directory
+- [ ] Delete file/directory
   
