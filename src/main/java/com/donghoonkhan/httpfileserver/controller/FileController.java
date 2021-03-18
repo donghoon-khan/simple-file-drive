@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/root")
 public class FileController {
@@ -27,6 +29,7 @@ public class FileController {
         this.fileService = fileService;
     }
 
+    @ApiOperation(value = "Root Dir 조회")
     @GetMapping("/")
     public ResponseEntity<List<FileObject>> listFilesAndDirectories() {
         try {
