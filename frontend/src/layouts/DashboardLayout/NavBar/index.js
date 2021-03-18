@@ -28,7 +28,7 @@ const items = [
     title: '내폴더'
   },
   {
-    href: '/',
+    href: '/app/share',
     icon: UsersIcon,
     title: '공유폴더'
   },

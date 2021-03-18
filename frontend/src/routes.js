@@ -11,6 +11,7 @@ import ProductListView from 'src/views/product/ProductListView';
 import RegisterView from 'src/views/auth/RegisterView';
 import SettingsView from 'src/views/settings/SettingsView';
 import FileView from './views/files/Files';
+import ShareView from './views/share/ShareView';
 
 const routes = [
   {
@@ -19,6 +20,7 @@ const routes = [
     children: [
       { path: 'account', element: <AccountView /> },
       { path: 'files', element: <FileView /> },
+      { path: 'share', element: <ShareView /> },
       { path: 'customers', element: <CustomerListView /> },
       { path: 'dashboard', element: <DashboardView /> },
       { path: 'products', element: <ProductListView /> },
