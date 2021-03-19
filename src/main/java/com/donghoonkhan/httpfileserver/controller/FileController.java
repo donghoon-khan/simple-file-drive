@@ -35,7 +35,7 @@ public class FileController {
     }
 
     @ApiOperation(value = "Root Dir 조회")
-    @GetMapping("/")
+    @GetMapping("/files")
     public ResponseEntity<List<FileObject>> listFilesAndDirectories() {
         try {
             return ResponseEntity.ok().body(fileService.getAllFilesAndDirectories(rootDir));
@@ -45,7 +45,7 @@ public class FileController {
     }
 
     @ApiOperation(value = "Download file")
-    @GetMapping("/{fileName:.+}")
+    @GetMapping("/file/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         Resource resource = fileService.loadFileAsResource(rootDir + "/" + fileName);
         String contentType = null;
