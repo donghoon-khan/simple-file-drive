@@ -8,4 +8,4 @@ spring:
       max-file-size: 1GB
       max-request-size: 1GB
 
-rootDir: /Users/kangdonghoon/test
+rootDir: ./test-data

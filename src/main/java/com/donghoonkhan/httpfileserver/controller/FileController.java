@@ -1,5 +1,6 @@
 package com.donghoonkhan.httpfileserver.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,6 +22,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @Slf4j
@@ -61,6 +64,12 @@ public class FileController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
-
     }
+
+    @GetMapping(value="/test")
+    public String getMethodName() {
+        File file = new File(".");
+        return file.getAbsoluteFile().toString();
+    }
+    
 }
