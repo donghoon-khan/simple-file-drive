@@ -1,8 +1,24 @@
 /* eslint padded-blocks: ["error", "always"] */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './main.css';
+import axios from 'axios';
 
 const ShareView = () => {
+
+  const [files, setFiles] = useState([]);
+
+  useEffect(() => {
+
+    axios.get('/files').then((res) => {
+
+      console.log(res);
+      setFiles(res.data);
+
+    });
+
+  }, []);
+
+  console.log(files, setFiles);
 
   return (
     <>
@@ -19,26 +35,40 @@ const ShareView = () => {
             <div className="Node">
               <img src="/static/images/asset/prev.png" alt="상위폴더" />
             </div>
-            <div className="Node">
-              <img src="/static/images/asset/directory.png" alt="폴더" />
-              <div>노란 고양이</div>
-            </div>
-            <div className="Node">
-              <img src="/static/images/asset/cat.jpg" alt="이미지" />
-              <div>물먹는 고양이</div>
-            </div>
-            <div className="Node">
-              <img src="/static/images/asset/cat.jpg" alt="이미지" />
-              <div>물먹는 고양이</div>
-            </div>
-            <div className="Node">
-              <img src="/static/images/asset/cat.jpg" alt="이미지" />
-              <div>물먹는 고양이</div>
-            </div>
-            <div className="Node">
-              <img src="/static/images/asset/cat.jpg" alt="이미지" />
-              <div>물먹는 고양이</div>
-            </div>
+            {
+              files.map((file) => {
+
+                if (file.type === 'DIRECTORY') {
+
+                  return (
+                    <div className="Node">
+                      <img src="/static/images/asset/directory.png" alt="이미지" />
+                      <div>{file.name}</div>
+                    </div>
+                  );
+
+                }
+
+                if (file.mimeType === 'image/jpeg' || file.mimeType === 'image/png') {
+
+                  return (
+                    <div className="Node">
+                      <img src="/static/images/asset/cat.jpg" alt="이미지" />
+                      <div>{file.name}</div>
+                    </div>
+                  );
+
+                }
+
+                return (
+                  <div className="Node">
+                    <img src="/static/images/asset/cat.jpg" alt="이미지" />
+                    <div>{file.name}</div>
+                  </div>
+                );
+
+              })
+            }
           </div>
         </main>
       </div>
