@@ -41,7 +41,7 @@ public class FileControllerTests extends AbstractIntegrationTest {
     Path path;
 
     @Test
-    @DisplayName("GET /")
+    @DisplayName("GET /files")
     void Test_Get_ListFilesAndDirectories() throws Exception {
         List<FileObject> fileObjects = new ArrayList<>();
         FileObject fileObject = FileObject.builder()
@@ -55,7 +55,7 @@ public class FileControllerTests extends AbstractIntegrationTest {
         fileObjects.add(fileObject);
         Mockito.when(fileService.getAllFilesAndDirectories(path.toString())).thenReturn(fileObjects);
         
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/root/")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/files")
                 .accept(MediaType.APPLICATION_JSON)
                 .content(expected)
                 .contentType(MediaType.APPLICATION_JSON);
