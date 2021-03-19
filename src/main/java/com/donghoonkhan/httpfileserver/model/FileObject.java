@@ -9,4 +9,5 @@ public class FileObject {
     FileType type;
     String name;
     String path;
+    String mimeType;
 }
