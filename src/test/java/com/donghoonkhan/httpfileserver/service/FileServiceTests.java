@@ -8,6 +8,7 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.springframework.core.io.Resource;
 
 public class FileServiceTests {
     
@@ -28,7 +29,18 @@ public class FileServiceTests {
         Files.createDirectory(directory2);
 
         FileService fileService = new FileServiceImpl();
-        assertEquals(4, fileService.getAllFilesAndDirectories(directory).size());
-        
+        assertEquals(4, fileService.getAllFilesAndDirectories(directory.toString()).size());   
+    }
+
+    @Test
+    void Test_LoadFileAsResource() throws Exception {
+
+        Path file = directory.resolve("test.test");
+        Files.createFile(file);
+
+        FileService fileService = new FileServiceImpl();
+        Resource resource = fileService.loadFileAsResource(directory.toString() + "/test.test");
+        assertEquals(file.toUri(), resource.getURI());
+
     }
 }

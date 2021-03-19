@@ -20,6 +20,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -41,7 +43,7 @@ public class FileControllerTests extends AbstractIntegrationTest {
     Path path;
 
     @Test
-    @DisplayName("GET /root/ success")
+    @DisplayName("GET /")
     void Test_Get_ListFilesAndDirectories() throws Exception {
         List<FileObject> fileObjects = new ArrayList<>();
         FileObject fileObject = FileObject.builder()
@@ -53,7 +55,7 @@ public class FileControllerTests extends AbstractIntegrationTest {
         String expected = mapToJson(fileObjects);
 
         fileObjects.add(fileObject);
-        Mockito.when(fileService.getAllFilesAndDirectories(path)).thenReturn(fileObjects);
+        Mockito.when(fileService.getAllFilesAndDirectories(path.toString())).thenReturn(fileObjects);
         
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/root/")
                 .accept(MediaType.APPLICATION_JSON)

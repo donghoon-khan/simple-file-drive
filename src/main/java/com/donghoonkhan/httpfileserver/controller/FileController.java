@@ -1,24 +1,29 @@
 package com.donghoonkhan.httpfileserver.controller;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.donghoonkhan.httpfileserver.model.FileObject;
 import com.donghoonkhan.httpfileserver.service.FileService;
+import com.google.common.net.HttpHeaders;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/root")
+@Slf4j
 public class FileController {
     
     private final String rootDir;
@@ -33,9 +38,29 @@ public class FileController {
     @GetMapping("/")
     public ResponseEntity<List<FileObject>> listFilesAndDirectories() {
         try {
-            return ResponseEntity.ok().body(fileService.getAllFilesAndDirectories(Paths.get(rootDir)));
+            return ResponseEntity.ok().body(fileService.getAllFilesAndDirectories(rootDir));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @ApiOperation(value = "Download file")
+    @GetMapping("/{fileName:.+}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+        Resource resource = fileService.loadFileAsResource(rootDir + "/" + fileName);
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException e) {
+            log.info("Could not determine file type.");
+        }
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+
     }
 }

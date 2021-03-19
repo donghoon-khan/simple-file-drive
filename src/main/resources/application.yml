@@ -1,4 +1,11 @@
 server:
   port: 8080
 
-rootDir: /tmp
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1GB
+      max-request-size: 1GB
+
+rootDir: /Users/kangdonghoon/test
