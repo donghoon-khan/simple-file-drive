@@ -33,8 +33,8 @@ const FileView = () => {
       title="Customers"
     >
       <Container maxWidth={false}>
-        <Toolbar />
         <Box mt={3}>
+          <Toolbar />
           <Results customers={list} />
         </Box>
       </Container>

@@ -1,11 +1,17 @@
 /* eslint padded-blocks: ["error", "always"] */
 import React, { useEffect, useState } from 'react';
-import './main.css';
 import axios from 'axios';
+import { Box, Container, Card } from '@material-ui/core';
+
+import './main.css';
+import BreadCrumb from './BreadCrumb';
+import Nodes from './Nodes';
 
 const ShareView = () => {
 
   const [files, setFiles] = useState([]);
+  const [breadCrumb, setBreadCrumb] = useState([]);
+  const [selectedFile, setSelectedFile] = useState({});
 
   useEffect(() => {
 
@@ -18,60 +24,34 @@ const ShareView = () => {
 
   }, []);
 
-  console.log(files, setFiles);
+  function onNodeClick (idx, file) {
 
+    const updateFile = [...files];
+    updateFile[idx].active = updateFile[idx].active ? false : true;
+    
+    setFiles(
+      updateFile
+    )
+
+  }
+  console.log(files);
   return (
     <>
-      <div className="directory">
-        <header>
-          <h1>고양이 사진첩</h1>
-        </header>
-        <main className="App">
-          <nav className="Breadcrumb">
-            <div>root</div>
-            <div>노란고양이</div>
-          </nav>
-          <div className="Nodes">
-            <div className="Node">
-              <img src="/static/images/asset/prev.png" alt="상위폴더" />
+      <Card>
+        <Container maxWidth={false}>
+          <Box mt={3}>
+            <div className="directory">
+              <header>
+                <h1>고양이 사진첩</h1>
+              </header>
+              <main className="App">
+                <BreadCrumb breadCrumb={breadCrumb} />
+                <Nodes files={files} onNodeClick={onNodeClick} />
+              </main>
             </div>
-            {
-              files.map((file) => {
-
-                if (file.type === 'DIRECTORY') {
-
-                  return (
-                    <div className="Node">
-                      <img src="/static/images/asset/directory.png" alt="이미지" />
-                      <div>{file.name}</div>
-                    </div>
-                  );
-
-                }
-
-                if (file.mimeType === 'image/jpeg' || file.mimeType === 'image/png') {
-
-                  return (
-                    <div className="Node">
-                      <img src="/static/images/asset/cat.jpg" alt="이미지" />
-                      <div>{file.name}</div>
-                    </div>
-                  );
-
-                }
-
-                return (
-                  <div className="Node">
-                    <img src="/static/images/asset/cat.jpg" alt="이미지" />
-                    <div>{file.name}</div>
-                  </div>
-                );
-
-              })
-            }
-          </div>
-        </main>
-      </div>
+          </Box>
+        </Container>
+      </Card>
     </>
   );
 

@@ -125,3 +125,18 @@ main {
     background-color: white;
     width: 50px;
 }
+
+
+.Node.active {
+    background-color : #b5dbe8;
+    transition: 0.3s ease-in-out;
+}
+
+#context_menu {
+    border : 1px solid black;
+    background-color: beige;
+}
+
+ul {
+    list-style:none;
+}
