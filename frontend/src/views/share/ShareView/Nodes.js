@@ -107,3 +107,19 @@ class Nodes extends Component {
 }
 
 export default Nodes;
+
+
+/**
+Enzyme 과 react-testing-library 는 서로 다른 철학을 가지고 있습니다. Enzyme 을 사용하여 테스트 코드를 작성 할 때에는 컴포넌트의 내부 기능을 자주 접근합니다. 예를 들어서 컴포넌트가 지니고 있는 props, state 를 확인하고, 컴포넌트의 내장 메서드를 직접 호출하기도 합니다.
+
+react-testing-library는 반면 렌더링 결과에 조금 더 집중을 합니다.
+ 실제 DOM 에 대해서 신경을 더 많이 쓰고, 
+ 컴포넌트의 인스턴스에 대해서 신경쓰지 않고, 
+ 실제 화면에 무엇이 보여지는지, 
+ 그리고 어떠한 이벤트가 발생했을때 화면에 원하는 변화가 생겼는지 이런 것을 확인하기에 
+ 조금 더 최적화 되어있습니다. 
+ 그래서, react-testing-library 는 조금 더 사용자의 관점에서 테스팅하기에 더욱 용이합니다.
+
+
+
+ */
