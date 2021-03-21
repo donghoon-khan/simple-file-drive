@@ -11,4 +11,4 @@ Application to HTTP File Server.
 - [ ] Create file/directory
 - [ ] Update file/directory
 - [ ] Delete file/directory
-  
+- [ ] Authentication user
