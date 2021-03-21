@@ -28,3 +28,10 @@ describe('<Nodes />', () => {
 
   
 });
+
+//https://velog.io/@velopert/react-testing-with-enzyme
+
+//shallow : 내부에component가 있다면 이를 렌더링 하지 않음
+//mount : 내부에 component가 있을경우 내부의 내용까지 렌더링 됨 
+ //wrapper.state() wrapper.props()
+ //wrppaer.instance().handleIncrease()

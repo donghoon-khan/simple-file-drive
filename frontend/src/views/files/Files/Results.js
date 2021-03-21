@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import axios from 'axios';
 import {
-  Avatar,
+
   Box,
   Card,
   Checkbox,
@@ -15,53 +16,82 @@ import {
   TablePagination,
   TableRow,
   Typography,
-  makeStyles
+  makeStyles,
+  Button
 } from '@material-ui/core';
-import getInitials from 'src/utils/getInitials';
+import { Save as SaveIcon, Delete as DeleteIcon } from '@material-ui/icons';
+
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons'
+
+
 
 const useStyles = makeStyles((theme) => ({
   root: {},
   avatar: {
     marginRight: theme.spacing(2)
+  },
+  button: {
+    marginLeft: '10px'
   }
 }));
 
-const Results = ({ className, customers, ...rest }) => {
+const Results = ({ className, files, ...rest }) => {
   const classes = useStyles();
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(25);
   const [page, setPage] = useState(0);
 
-  const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
 
+
+  const handleSelectAll = (event) => {
+    let newFiles;
+    console.log('handleSelectAll');
     if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.id);
+      newFiles = files.map((file) => {
+        file.check = true;
+        return file;
+      });
     } else {
-      newSelectedCustomerIds = [];
+      newFiles = files.map((file) => {
+        file.check = false;
+        return file;
+      });
+
     }
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
+    console.log(newFiles);
+
+    rest.setfiles(newFiles);
   };
 
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
+  const handleSelectOne = (event, idx) => {
+    // const selectedIndex = selectedCustomerIds.indexOf(id);
+    // let newSelectedCustomerIds = [];
 
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
+    // if (selectedIndex === -1) {
+    //   newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
+    // } else if (selectedIndex === 0) {
+    //   newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
+    // } else if (selectedIndex === selectedCustomerIds.length - 1) {
+    //   newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
+    // } else if (selectedIndex > 0) {
+    //   newSelectedCustomerIds = newSelectedCustomerIds.concat(
+    //     selectedCustomerIds.slice(0, selectedIndex),
+    //     selectedCustomerIds.slice(selectedIndex + 1)
+    //   );
+    // }
+    const newFiles = [...files];
+    if (newFiles[idx].check) {
+      newFiles[idx].check = false;
+
+    } else {
+      newFiles[idx].check = true;
     }
+    console.log(newFiles);
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
+    rest.setfiles(newFiles);
+    // setSelectedCustomerIds(newSelectedCustomerIds);
   };
 
   const handleLimitChange = (event) => {
@@ -71,6 +101,26 @@ const Results = ({ className, customers, ...rest }) => {
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
+
+  const onClickExport = (file) => {
+
+    axios({ url: `/file/${file.name}`, method: 'GET', responseType: 'blob' }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', file.name); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
+  }
+  const data = [
+    {
+      "type": "DIRECTORY",
+      "name": "childDirectory",
+      "path": ".\\test-data\\childDirectory",
+      "mimeType": null
+    },
+  ];
 
   return (
     <Card
@@ -84,7 +134,7 @@ const Results = ({ className, customers, ...rest }) => {
               <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={selectedCustomerIds.length === customers.length}
+                    checked={files.filter(file => file.check).length === files.length}
                     color="primary"
                     indeterminate={
                       selectedCustomerIds.length > 0
@@ -94,66 +144,71 @@ const Results = ({ className, customers, ...rest }) => {
                   />
                 </TableCell>
                 <TableCell>
-                  Name
+                  File Name
                 </TableCell>
                 <TableCell>
-                  Email
+                  type
                 </TableCell>
                 <TableCell>
-                  Location
-                </TableCell>
-                <TableCell>
-                  Phone
-                </TableCell>
-                <TableCell>
-                  Registration date
+                  export
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {customers.slice(0, limit).map((customer) => (
+              {files.slice(0, limit).map((file, idx) => (
                 <TableRow
                   hover
-                  key={customer.id}
-                  selected={selectedCustomerIds.indexOf(customer.id) !== -1}
+                  key={file.name}
+                  selected={file.check === undefined ? false : file.check}
                 >
                   <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={selectedCustomerIds.indexOf(customer.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, customer.id)}
-                      value="true"
-                    />
+
+                    {file.type !== 'DIRECTORY' ?
+                      <Checkbox
+                        checked={file.check === undefined ? false : file.check}
+                        onChange={(event) => handleSelectOne(event, idx)}
+                      // value={file.check===undefined ? false : file.check }
+                      /> : null}
+
                   </TableCell>
                   <TableCell>
                     <Box
                       alignItems="center"
                       display="flex"
                     >
-                      <Avatar
-                        className={classes.avatar}
-                        src={customer.avatarUrl}
-                      >
-                        {getInitials(customer.name)}
-                      </Avatar>
+
                       <Typography
                         color="textPrimary"
                         variant="body1"
                       >
-                        {customer.name}
+                        {file.name}
                       </Typography>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {customer.email}
+                    {file.type}
                   </TableCell>
                   <TableCell>
-                    {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
-                  </TableCell>
-                  <TableCell>
-                    {customer.phone}
-                  </TableCell>
-                  <TableCell>
-                    {moment(customer.createdAt).format('DD/MM/YYYY')}
+                    {
+                      file.type !== 'DIRECTORY' ? 
+                      <>
+                        <Button
+                      variant="contained"
+                      color="secondary"
+                      className={classes.button}
+                      startIcon={<SaveIcon />}
+                      onClick={()=>{onClickExport(file)}}
+                    >SAVE</Button>
+
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      className={classes.button}
+                      startIcon={<DeleteIcon />}
+                    >Delete</Button>
+                      </> : null
+                    }
+
                   </TableCell>
                 </TableRow>
               ))}
@@ -163,7 +218,7 @@ const Results = ({ className, customers, ...rest }) => {
       </PerfectScrollbar>
       <TablePagination
         component="div"
-        count={customers.length}
+        count={files.length}
         onChangePage={handlePageChange}
         onChangeRowsPerPage={handleLimitChange}
         page={page}

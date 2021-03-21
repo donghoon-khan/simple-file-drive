@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -12,6 +12,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import { Search as SearchIcon } from 'react-feather';
+import Modal from '../../../components/Modal'
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -25,6 +26,25 @@ const useStyles = makeStyles((theme) => ({
 
 const Toolbar = ({ className, ...rest }) => {
   const classes = useStyles();
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const onModalChange = () => {
+    setModalOpen(true);
+  } 
+
+  const onFileUpload = (e) =>{
+    let file = e.target.files[0];
+    let formData = new FormData();
+    formData.append('files', file);
+  }
+
+  const onConfirmFileUpload = () =>{
+    setModalOpen(false);
+  }
+
+  const onCloseModal = () =>{
+    setModalOpen(false);
+  }
 
   return (
     <div
@@ -35,17 +55,11 @@ const Toolbar = ({ className, ...rest }) => {
         display="flex"
         justifyContent="flex-end"
       >
-        <Button className={classes.importButton}>
+        <Button className={classes.importButton} onClick={onModalChange}>
           Import
         </Button>
-        <Button className={classes.exportButton}>
+        <Button className={classes.exportButton} onClick={(e) => {rest.onExportClick(e)}}>
           Export
-        </Button>
-        <Button
-          color="primary"
-          variant="contained"
-        >
-          Add customer
         </Button>
       </Box>
       <Box mt={3}>
@@ -73,6 +87,11 @@ const Toolbar = ({ className, ...rest }) => {
           </CardContent>
         </Card>
       </Box>
+      <Modal open={modalOpen}>
+        <input type="file" onChange={(e) => {onFileUpload(e)}}></input>
+        <Button onClick={onConfirmFileUpload}>확인</Button>
+        <Button onClick={onCloseModal}>취소</Button>
+      </Modal>
     </div>
   );
 };

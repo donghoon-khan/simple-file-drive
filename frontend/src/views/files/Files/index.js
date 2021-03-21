@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Container,
@@ -21,21 +21,45 @@ const useStyles = makeStyles((theme) => ({
 
 const FileView = () => {
   const classes = useStyles();
-  const [list, setList] = useState([]);
-  axios.get('all').then((res) => {
-    console.log(res);
-    setList(res);
-  });
+  
+  const [files, setFiles] = useState([]);
+  useEffect(() => {
+    axios.get('/files').then(res => {
+      setFiles(res.data);
+    }
+    )
+  }, [])
+
+  const onExportClick = () =>{
+    const selectedFile = files.filter((file) => file.check && file.type!=='DIRECTORY')
+    if( selectedFile.length ===0) {
+      alert('선택된 파일이 없습니다.');
+      return;
+    }
+    files.forEach((file) => {
+      if(file.check && file.type!=='DIRECTORY'){
+        console.log(file.name)
+        axios({url: `/file/${file.name}`, method:'GET', responseType: 'blob'}).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', file.name); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+       });
+      }
+    })
+  }
 
   return (
     <Page
       className={classes.root}
-      title="Customers"
+      title="Files"
     >
       <Container maxWidth={false}>
         <Box mt={3}>
-          <Toolbar />
-          <Results customers={list} />
+          <Toolbar onExportClick={onExportClick}/>
+          <Results files={files} setfiles={setFiles}/>
         </Box>
       </Container>
     </Page>
