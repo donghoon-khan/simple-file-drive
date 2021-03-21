@@ -49,9 +49,8 @@ public class FileServiceImpl implements FileService {
     @Override
     public Resource loadFileAsResource(String fileName) {
         Path filePath = Paths.get(fileName);
-        Resource resource;
         try {
-            resource = new UrlResource(filePath.toUri());
+            Resource resource = new UrlResource(filePath.toUri());
             if (!Files.isDirectory(filePath) && resource.exists()) {
                 return resource;
             } else {
