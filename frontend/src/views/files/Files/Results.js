@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, files, ...rest }) => {
+const Results = ({ className, files, setfiles,...rest }) => {
   const classes = useStyles();
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(25);
@@ -62,7 +62,7 @@ const Results = ({ className, files, ...rest }) => {
 
     console.log(newFiles);
 
-    rest.setfiles(newFiles);
+    setfiles(newFiles);
   };
 
   const handleSelectOne = (event, idx) => {
@@ -90,7 +90,7 @@ const Results = ({ className, files, ...rest }) => {
     }
     console.log(newFiles);
 
-    rest.setfiles(newFiles);
+    setfiles(newFiles);
     // setSelectedCustomerIds(newSelectedCustomerIds);
   };
 
@@ -231,7 +231,6 @@ const Results = ({ className, files, ...rest }) => {
 
 Results.propTypes = {
   className: PropTypes.string,
-  customers: PropTypes.array.isRequired
 };
 
 export default Results;

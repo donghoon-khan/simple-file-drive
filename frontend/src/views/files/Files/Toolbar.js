@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, ...rest }) => {
+const Toolbar = ({ className, onExportClick, ...rest }) => {
   const classes = useStyles();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -58,7 +58,7 @@ const Toolbar = ({ className, ...rest }) => {
         <Button className={classes.importButton} onClick={onModalChange}>
           Import
         </Button>
-        <Button className={classes.exportButton} onClick={(e) => {rest.onExportClick(e)}}>
+        <Button className={classes.exportButton} onClick={(e) => {onExportClick(e)}}>
           Export
         </Button>
       </Box>
