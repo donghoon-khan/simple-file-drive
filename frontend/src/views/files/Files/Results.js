@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, files, setfiles,...rest }) => {
+const Results = ({ className, files, setfiles, onDoubleClick, onRemoveRoute, ...rest }) => {
   const classes = useStyles();
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(25);
@@ -66,21 +66,7 @@ const Results = ({ className, files, setfiles,...rest }) => {
   };
 
   const handleSelectOne = (event, idx) => {
-    // const selectedIndex = selectedCustomerIds.indexOf(id);
-    // let newSelectedCustomerIds = [];
 
-    // if (selectedIndex === -1) {
-    //   newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, id);
-    // } else if (selectedIndex === 0) {
-    //   newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    // } else if (selectedIndex === selectedCustomerIds.length - 1) {
-    //   newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
-    // } else if (selectedIndex > 0) {
-    //   newSelectedCustomerIds = newSelectedCustomerIds.concat(
-    //     selectedCustomerIds.slice(0, selectedIndex),
-    //     selectedCustomerIds.slice(selectedIndex + 1)
-    //   );
-    // }
     const newFiles = [...files];
     if (newFiles[idx].check) {
       newFiles[idx].check = false;
@@ -104,7 +90,7 @@ const Results = ({ className, files, setfiles,...rest }) => {
 
   const onClickExport = (file) => {
 
-    axios({ url: `/file/${file.name}`, method: 'GET', responseType: 'blob' }).then((response) => {
+    axios({ url: `/file?file=./test-data/${file.name}`, method: 'GET', responseType: 'blob' }).then((response) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -121,6 +107,14 @@ const Results = ({ className, files, setfiles,...rest }) => {
       "mimeType": null
     },
   ];
+
+  const onDbClick = (name) =>{
+    onDoubleClick(name);
+  }
+
+  
+
+  // onRemoveRoute
 
   return (
     <Card
@@ -160,10 +154,12 @@ const Results = ({ className, files, setfiles,...rest }) => {
                   hover
                   key={file.name}
                   selected={file.check === undefined ? false : file.check}
+                  onDoubleClick={() => { onDbClick(file.name) } }
+                  // onClick={onDbClick}
                 >
                   <TableCell padding="checkbox">
 
-                    {file.type !== 'DIRECTORY' ?
+                    {file.name.includes('.') ?
                       <Checkbox
                         checked={file.check === undefined ? false : file.check}
                         onChange={(event) => handleSelectOne(event, idx)}
@@ -190,7 +186,7 @@ const Results = ({ className, files, setfiles,...rest }) => {
                   </TableCell>
                   <TableCell>
                     {
-                      file.type !== 'DIRECTORY' ? 
+                      file.name.includes('.') ? 
                       <>
                         <Button
                       variant="contained"
