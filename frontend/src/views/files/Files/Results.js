@@ -165,6 +165,12 @@ const Results = ({ className, route, files, setfiles, onDoubleClick, onRemoveRou
               <TableCell>
                 ...
               </TableCell>
+              <TableCell>
+              </TableCell>
+              <TableCell>
+              </TableCell>
+              <TableCell>
+              </TableCell>
             </TableRow>:
             null}
               {files.slice(0, limit).map((file, idx) => (
