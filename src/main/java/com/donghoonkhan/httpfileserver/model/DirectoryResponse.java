@@ -1,20 +1,22 @@
 package com.donghoonkhan.httpfileserver.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@Builder
+@Setter
+@NoArgsConstructor
 public class DirectoryResponse {
     
-    private String name;
-    private String uri;
+    private String path;
     private Long size;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private Instant createdAt;
+    private Instant modifiedAt;
     private List<FileResponse> files;
-    private List<DirectoryResponse> subDirectories;
+    private List<DirectoryResponse> subDirectories = new ArrayList<>();
 }

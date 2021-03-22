@@ -7,5 +7,3 @@ spring:
       enabled: true
       max-file-size: 1GB
       max-request-size: 1GB
-
-rootDir: ./test-data

@@ -1,11 +1,11 @@
 package com.donghoonkhan.httpfileserver.service;
 
-import com.donghoonkhan.httpfileserver.model.DirectoryResponse;
+import java.io.IOException;
 
-import org.springframework.web.server.ResponseStatusException;
+import com.donghoonkhan.httpfileserver.model.DirectoryResponse;
 
 public interface DirectoryService {
     
     public void createDirectory(String path, String directoryName);
-    public DirectoryResponse getDirectory(String path) throws ResponseStatusException;
+    public DirectoryResponse getDirectory(String directory) throws IOException;
 }
