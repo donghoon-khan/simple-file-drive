@@ -41,7 +41,7 @@ const FileView = () => {
 
 
   const onExportClick = () =>{
-    const selectedFile = files.filter((file) => file.check && file.type!=='DIRECTORY')
+    const selectedFile = files.filter((file) => file.check && file.name.includes('.'))
     if( selectedFile.length ===0) {
       alert('선택된 파일이 없습니다.');
       return;
