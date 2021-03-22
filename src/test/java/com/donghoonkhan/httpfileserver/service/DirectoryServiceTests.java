@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.donghoonkhan.httpfileserver.service.impl.DirectoryServiceImpl;
-import com.donghoonkhan.httpfileserver.service.impl.FileServiceImpl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -29,7 +28,7 @@ public class DirectoryServiceTests {
         Files.createDirectory(directory1);
         Files.createDirectory(directory2);
 
-        DirectoryService directoryService = new DirectoryServiceImpl(new FileServiceImpl());
-        assertEquals(2, directoryService.getDirectory(directory.toString()).getSubDirectories().size());
+        DirectoryService directoryService = new DirectoryServiceImpl();
+        assertEquals(2, directoryService.getListDirectories(directory.toString()).size());
     }
 }

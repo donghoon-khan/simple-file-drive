@@ -1,6 +1,7 @@
 package com.donghoonkhan.httpfileserver.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.donghoonkhan.httpfileserver.model.DirectoryResponse;
 import com.donghoonkhan.httpfileserver.service.DirectoryService;
@@ -28,16 +29,25 @@ public class DirectoryController {
     }
 
     @ApiOperation(value = "Retrieve directory")
-    @GetMapping(value="/directory")
-    public ResponseEntity<DirectoryResponse> retrieveDirectory(@RequestParam(required = false, value = "directory") String directory) {
+    @GetMapping(value = "/directories")
+    public ResponseEntity<List<DirectoryResponse>> retrieveDirectory(
+            @RequestParam(required = false, value = "directory")String directory) {
         
         try {
             if (directory == null) {
-                return ResponseEntity.ok().body(directoryService.getDirectory(rootPath));
+                return ResponseEntity.ok().body(directoryService.getListDirectories(rootPath));
             }
-            return ResponseEntity.ok().body(directoryService.getDirectory(directory));
+            return ResponseEntity.ok().body(directoryService.getListDirectories(directory));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
+    /*@ApiOperation(value = "Create directory")
+    @PostMapping(value = "/directory")
+    public ResponseEntity<Void> createDirectory(
+            @RequestParam(required = false, value = "directory")String directory) {
+
+        
+    }*/
 }

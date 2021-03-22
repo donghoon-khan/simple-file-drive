@@ -3,6 +3,8 @@ package com.donghoonkhan.httpfileserver.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.donghoonkhan.httpfileserver.AbstractIntegrationTest;
 import com.donghoonkhan.httpfileserver.model.DirectoryResponse;
@@ -34,16 +36,17 @@ public class DirectoryControllerTests extends AbstractIntegrationTest {
 
     @Test
     void Test_RetrieveDirectory() throws Exception {
-        DirectoryResponse directoryResponse = new DirectoryResponse();
-        directoryResponse.setPath(directory.toString());
-        directoryResponse.setSize(1L);
+        DirectoryResponse directory = DirectoryResponse.builder().name("test").path("./test").build();
+        List<DirectoryResponse> directoryResponse = new ArrayList<>();
+        directoryResponse.add(directory);
         
         String expected = mapToJson(directoryResponse);
-        Mockito.when(directoryService.getDirectory(directory.toString())).thenReturn(directoryResponse);
-        ResponseEntity<DirectoryResponse> response = directoryController.retrieveDirectory(directory.toString());
+        Mockito.when(directoryService.getListDirectories(directory.toString())).thenReturn(directoryResponse);
+        ResponseEntity<List<DirectoryResponse>> response = directoryController.retrieveDirectory(directory.toString());
 
         assertEquals(expected, mapToJson(response.getBody()));
-        assertEquals(1L, response.getBody().getSize());
+        assertEquals("test", response.getBody().get(0).getName());
+        assertEquals("./test", response.getBody().get(0).getPath());
     }
 
     private String mapToJson(Object object) throws JsonProcessingException {
