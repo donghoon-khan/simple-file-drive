@@ -1,38 +1,31 @@
 package com.donghoonkhan.httpfileserver.controller;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.donghoonkhan.httpfileserver.model.FileObject;
 import com.donghoonkhan.httpfileserver.model.FileResponse;
 import com.donghoonkhan.httpfileserver.service.FileService;
 import com.google.common.net.HttpHeaders;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@Slf4j
 public class FileController {
     
-    private final String rootDir;
     private final FileService fileService;
 
-    public FileController(@Value("${rootDir}")String rootDir, FileService fileService) {
-        this.rootDir = rootDir;
+    public FileController(FileService fileService) {
         this.fileService = fileService;
     }
 
@@ -40,38 +33,27 @@ public class FileController {
     @GetMapping("/files")
     public ResponseEntity<List<FileResponse>> getAllFiles(@RequestParam(required = true, value = "path")String path) {
         try {
-            return ResponseEntity.ok().body(fileService.getAllFilesAsFileResponse(path));
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @ApiOperation(value = "Root Dir 조회")
-    //@GetMapping("/files")
-    public ResponseEntity<List<FileObject>> listFilesAndDirectories() {
-        try {
-            return ResponseEntity.ok().body(fileService.getAllFilesAndDirectories(rootDir));
+            return ResponseEntity.ok().body(fileService.getListFiles(path));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @ApiOperation(value = "Download file")
-    @GetMapping("/file/{fileName:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-        Resource resource = fileService.loadFileAsResource(rootDir + "/" + fileName);
-        String contentType = null;
+    @GetMapping("/file")
+    public ResponseEntity<Resource> downloadFile(@RequestParam(required = true, value = "file")String file) {
         try {
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+            Resource resource = fileService.getFileAsResource(file);
+            String contentType = Files.probeContentType(Paths.get(file));
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
         } catch (IOException e) {
-            log.info("Could not determine file type.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
     }
 }

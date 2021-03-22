@@ -1,6 +1,5 @@
 package com.donghoonkhan.httpfileserver.model;
 
-import java.net.URI;
 import java.time.Instant;
 
 import lombok.Builder;
@@ -11,7 +10,7 @@ import lombok.Getter;
 public class FileResponse {
     
     private String name;
-    private URI uri;
+    private String path;
     private String mimeType;
     private Long size;
     private Instant createdAt;

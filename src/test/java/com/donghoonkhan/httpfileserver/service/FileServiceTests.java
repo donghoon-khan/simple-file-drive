@@ -30,7 +30,7 @@ public class FileServiceTests {
         Files.createDirectory(directory2);
 
         FileService fileService = new FileServiceImpl();
-        assertEquals(4, fileService.getAllFilesAndDirectories(directory.toString()).size());
+        assertEquals(2, fileService.getListFiles(directory.toString()).size());
     }
 
     @Test
@@ -40,7 +40,7 @@ public class FileServiceTests {
         Files.createFile(file);
 
         FileService fileService = new FileServiceImpl();
-        Resource resource = fileService.loadFileAsResource(directory.toString() + "/test.test");
+        Resource resource = fileService.getFileAsResource(directory.toString() + "/test.test");
         assertEquals(file.toUri(), resource.getURI());
 
     }
