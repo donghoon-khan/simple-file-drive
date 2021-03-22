@@ -23,12 +23,22 @@ const FileView = () => {
   const classes = useStyles();
   
   const [files, setFiles] = useState([]);
+  const [route, setRoute] = useState(['./test-data']);
+
   useEffect(() => {
-    axios.get('/files').then(res => {
-      setFiles(res.data);
-    }
-    )
-  }, [])
+    findData('./test-data');
+  },[]);
+    
+  const findData = (path) => {
+    axios.get(`/files?directory=${path}`).then(res => {
+      axios.get(`/directories?directory=${path}`).then(res2 => {
+        setFiles([...res2.data, ...res.data]);
+      })
+    
+  })
+}
+
+
 
   const onExportClick = () =>{
     const selectedFile = files.filter((file) => file.check && file.type!=='DIRECTORY')
@@ -37,9 +47,10 @@ const FileView = () => {
       return;
     }
     files.forEach((file) => {
-      if(file.check && file.type!=='DIRECTORY'){
+      if(file.check && !file.name.includes('.')){
         console.log(file.name)
-        axios({url: `/file/${file.name}`, method:'GET', responseType: 'blob'}).then((response) => {
+        
+        axios({url: `./test-data/file/${file.name}`, method:'GET', responseType: 'blob'}).then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;
@@ -51,6 +62,17 @@ const FileView = () => {
     })
   }
 
+  const handleAddRoute = (data) =>{
+    setRoute([...route, `/${data}`])
+    findData(route.join('')+`/${data}`);
+  }
+
+  const handleRemoveRoute = () => {
+    const newRoute = [...route];
+    newRoute.pop();
+    setRoute(newRoute);
+  } 
+
   return (
     <Page
       className={classes.root}
@@ -59,7 +81,7 @@ const FileView = () => {
       <Container maxWidth={false}>
         <Box mt={3}>
           <Toolbar onExportClick={onExportClick}/>
-          <Results files={files} setfiles={setFiles}/>
+          <Results onDoubleClick={handleAddRoute} onRemoveRoute={handleRemoveRoute} files={files} setfiles={setFiles}/>
         </Box>
       </Container>
     </Page>
