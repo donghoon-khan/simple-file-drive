@@ -2,17 +2,21 @@ package com.donghoonkhan.httpfileserver.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.donghoonkhan.httpfileserver.AbstractIntegrationTest;
 import com.donghoonkhan.httpfileserver.model.FileObject;
+import com.donghoonkhan.httpfileserver.model.FileResponse;
 import com.donghoonkhan.httpfileserver.model.FileType;
 import com.donghoonkhan.httpfileserver.service.FileService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -22,50 +26,49 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-@AutoConfigureMockMvc
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class FileControllerTests extends AbstractIntegrationTest {
     
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
     private FileService fileService;
 
     @TempDir
     Path path;
 
+    private FileController fileController;
+
+    @BeforeEach
+    void setup() {
+        fileController = new FileController(path.toString(), fileService);
+    }
+
     @Test
-    @DisplayName("GET /files")
-    void Test_Get_ListFilesAndDirectories() throws Exception {
-        List<FileObject> fileObjects = new ArrayList<>();
-        FileObject fileObject = FileObject.builder()
-                .type(FileType.FILE)
-                .path("/test/test.file")
-                .name("test.file")
-                .build();
-
-        String expected = mapToJson(fileObjects);
-
-        fileObjects.add(fileObject);
-        Mockito.when(fileService.getAllFilesAndDirectories(path.toString())).thenReturn(fileObjects);
+    public void Test_GetAllFileAsFileResponse() throws Exception {
+        List<FileResponse> files = new ArrayList<>();
+        FileResponse fileResponse = FileResponse.builder()
+            .createdAt(Instant.now())
+            .modifiedAt(Instant.now())
+            .name("test")
+            .size(1L)
+            .uri("/test")
+            .build();
+        files.add(fileResponse);
+        String expected = mapToJson(files);
         
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/files")
-                .accept(MediaType.APPLICATION_JSON)
-                .content(expected)
-                .contentType(MediaType.APPLICATION_JSON);
+        Mockito.when(fileService.getAllFilesAsFileResponse(path.toString())).thenReturn(files);
+        ResponseEntity<List<FileResponse>> response = fileController.getAllFiles(null);
 
-        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-        MockHttpServletResponse response = result.getResponse();
-
-        String actual = response.getContentAsString();
-        assertEquals(expected, actual);
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals(expected, mapToJson(response.getBody()));
+        assertEquals(HttpStatus.OK,response.getStatusCode());
     }
 
     private String mapToJson(Object object) throws JsonProcessingException {

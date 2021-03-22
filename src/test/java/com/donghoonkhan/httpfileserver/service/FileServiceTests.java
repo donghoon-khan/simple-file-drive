@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.donghoonkhan.httpfileserver.service.impl.FileServiceImpl;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.core.io.Resource;
@@ -16,8 +18,7 @@ public class FileServiceTests {
     Path directory;
 
     @Test
-    void Test_GetAllFilesAndDirectories() throws IOException {
-        
+    void Test_GetAllFiles() throws IOException {
         Path file1 = directory.resolve("file1.test");
         Path file2 = directory.resolve("file2.test");
         Path directory1 = directory.resolve("directory1");
@@ -29,7 +30,7 @@ public class FileServiceTests {
         Files.createDirectory(directory2);
 
         FileService fileService = new FileServiceImpl();
-        assertEquals(4, fileService.getAllFilesAndDirectories(directory.toString()).size());   
+        assertEquals(4, fileService.getAllFilesAndDirectories(directory.toString()).size());
     }
 
     @Test

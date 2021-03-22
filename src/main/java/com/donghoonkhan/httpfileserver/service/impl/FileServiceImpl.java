@@ -1,16 +1,21 @@
-package com.donghoonkhan.httpfileserver.service;
+package com.donghoonkhan.httpfileserver.service.impl;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.donghoonkhan.httpfileserver.model.FileObject;
+import com.donghoonkhan.httpfileserver.model.FileResponse;
 import com.donghoonkhan.httpfileserver.model.FileType;
+import com.donghoonkhan.httpfileserver.service.FileService;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -64,5 +69,26 @@ public class FileServiceImpl implements FileService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
-    
+
+    @Override
+    public List<FileResponse> getAllFilesAsFileResponse(String directory) throws IOException {
+        try (Stream<Path> stream =  Files.list(Paths.get(directory))) {
+            return stream
+                    .filter(file -> !Boolean.valueOf(Files.isDirectory(file)))
+                    .map(file -> {
+                        try {
+                            return FileResponse.builder()
+                                    .mimeType(Files.probeContentType(Paths.get(file.toUri())))
+                                    .name(file.getFileName().toString())
+                                    .uri(file.toString())
+                                    .createdAt(Files.readAttributes(file, BasicFileAttributes.class).creationTime().toInstant())
+                                    .modifiedAt(Files.readAttributes(file, BasicFileAttributes.class).lastModifiedTime().toInstant())
+                                .build();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
+    } 
 }
