@@ -71,6 +71,7 @@ const FileView = () => {
     const newRoute = [...route];
     newRoute.pop();
     setRoute(newRoute);
+    findData(newRoute.join(''));
   } 
 
   return (
@@ -81,7 +82,7 @@ const FileView = () => {
       <Container maxWidth={false}>
         <Box mt={3}>
           <Toolbar onExportClick={onExportClick}/>
-          <Results onDoubleClick={handleAddRoute} onRemoveRoute={handleRemoveRoute} files={files} setfiles={setFiles}/>
+          <Results route={route} onDoubleClick={handleAddRoute} onRemoveRoute={handleRemoveRoute} files={files} setfiles={setFiles}/>
         </Box>
       </Container>
     </Page>

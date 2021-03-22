@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, files, setfiles, onDoubleClick, onRemoveRoute, ...rest }) => {
+const Results = ({ className, route, files, setfiles, onDoubleClick, onRemoveRoute, ...rest }) => {
   const classes = useStyles();
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(25);
@@ -109,13 +109,17 @@ const Results = ({ className, files, setfiles, onDoubleClick, onRemoveRoute, ...
   ];
 
   const onDbClick = (name) =>{
-    onDoubleClick(name);
+    if(name==='...'){
+      onRemoveRoute();
+    }else{
+      onDoubleClick(name);
+    }
   }
 
   
 
   // onRemoveRoute
-
+  // console.log(route);
   return (
     <Card
       className={clsx(classes.root, className)}
@@ -149,6 +153,20 @@ const Results = ({ className, files, setfiles, onDoubleClick, onRemoveRoute, ...
               </TableRow>
             </TableHead>
             <TableBody>
+              {route.length > 1 ?
+              <TableRow
+              hover
+              
+              onDoubleClick={() => { onDbClick('...') } }
+              // onClick={onDbClick}
+            >
+              <TableCell padding="checkbox">
+              </TableCell>
+              <TableCell>
+                ...
+              </TableCell>
+            </TableRow>:
+            null}
               {files.slice(0, limit).map((file, idx) => (
                 <TableRow
                   hover
