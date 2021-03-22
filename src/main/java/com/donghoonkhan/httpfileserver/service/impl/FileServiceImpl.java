@@ -80,7 +80,7 @@ public class FileServiceImpl implements FileService {
                             return FileResponse.builder()
                                     .mimeType(Files.probeContentType(Paths.get(file.toUri())))
                                     .name(file.getFileName().toString())
-                                    .uri(file.toString())
+                                    .uri(file.toUri())
                                     .createdAt(Files.readAttributes(file, BasicFileAttributes.class).creationTime().toInstant())
                                     .modifiedAt(Files.readAttributes(file, BasicFileAttributes.class).lastModifiedTime().toInstant())
                                 .build();

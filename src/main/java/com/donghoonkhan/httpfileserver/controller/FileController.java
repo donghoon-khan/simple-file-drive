@@ -38,17 +38,9 @@ public class FileController {
 
     @ApiOperation(value = "List files")
     @GetMapping("/files")
-    public ResponseEntity<List<FileResponse>> getAllFiles(@RequestParam(required = false, value = "path")String path) {
-        log.info("=======================");
-        log.info("=======================");
+    public ResponseEntity<List<FileResponse>> getAllFiles(@RequestParam(required = true, value = "path")String path) {
         try {
-            String directory = rootDir;
-            if (path != null && path.startsWith("/")) {
-                directory += path;
-            } else if(path != null) {
-                directory = directory + "/" + path;
-            }
-            return ResponseEntity.ok().body(fileService.getAllFilesAsFileResponse(directory));
+            return ResponseEntity.ok().body(fileService.getAllFilesAsFileResponse(path));
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
