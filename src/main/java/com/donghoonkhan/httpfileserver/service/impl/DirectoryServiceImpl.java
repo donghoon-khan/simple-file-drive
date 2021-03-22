@@ -22,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 public class DirectoryServiceImpl implements DirectoryService {
 
     @Override
-    public void createDirectory(String path, String directoryName) {
+    public void createDirectory(String directory) throws IOException {
+        Path path = Paths.get(directory);
+        Files.createDirectory(path);
     }
 
     @Override

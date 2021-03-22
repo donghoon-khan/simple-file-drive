@@ -1,6 +1,8 @@
 package com.donghoonkhan.httpfileserver.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,6 +10,7 @@ import java.nio.file.Path;
 
 import com.donghoonkhan.httpfileserver.service.impl.DirectoryServiceImpl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -15,6 +18,13 @@ public class DirectoryServiceTests {
     
     @TempDir
     Path directory;
+
+    DirectoryService directoryService;
+
+    @BeforeEach
+    void setup() {
+        directoryService = new DirectoryServiceImpl();
+    }
 
     @Test
     void Test_GetDirectory() throws IOException {
@@ -28,7 +38,12 @@ public class DirectoryServiceTests {
         Files.createDirectory(directory1);
         Files.createDirectory(directory2);
 
-        DirectoryService directoryService = new DirectoryServiceImpl();
         assertEquals(2, directoryService.getListDirectories(directory.toString()).size());
+    }
+
+    @Test
+    void Test_CreateDirectory() throws IOException {
+        assertDoesNotThrow(() -> directoryService.createDirectory(directory.toString() + "test"));
+        assertThrows(IOException.class, () -> directoryService.createDirectory(directory.toString()));
     }
 }
