@@ -29,7 +29,7 @@ public class DirectoryControllerTests extends AbstractIntegrationTest {
 
     @BeforeEach
     void setup() {
-        directoryController = new DirectoryController(directoryService);
+        directoryController = new DirectoryController(directoryService, directory.toString());
     }
 
     @Test

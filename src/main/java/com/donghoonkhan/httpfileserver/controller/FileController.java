@@ -9,6 +9,7 @@ import com.donghoonkhan.httpfileserver.model.FileResponse;
 import com.donghoonkhan.httpfileserver.service.FileService;
 import com.google.common.net.HttpHeaders;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,21 +20,29 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.swagger.annotations.ApiOperation;
-import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequiredArgsConstructor
 public class FileController {
     
     private final FileService fileService;
+    private final String rootPath;
+
+    public FileController(FileService fileService, @Value("${rootPath}")String rootPath) {
+        this.fileService = fileService;
+        this.rootPath = rootPath;
+    }
 
     @ApiOperation(value = "List files")
     @GetMapping("/files")
-    public ResponseEntity<List<FileResponse>> getAllFiles(@RequestParam(required = true, value = "path")String path) {
+    public ResponseEntity<List<FileResponse>> getAllFiles(@RequestParam(required = false, value = "directory")String directory) {
         try {
-            return ResponseEntity.ok().body(fileService.getListFiles(path));
+            if (directory == null) {
+                return ResponseEntity.ok().body(fileService.getListFiles(rootPath));
+            }
+            return ResponseEntity.ok().body(fileService.getListFiles(directory));
+            
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -51,7 +60,7 @@ public class FileController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(resource);
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 }

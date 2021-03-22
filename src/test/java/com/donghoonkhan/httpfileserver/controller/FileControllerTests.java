@@ -35,7 +35,7 @@ public class FileControllerTests extends AbstractIntegrationTest {
 
     @BeforeEach
     void setup() {
-        fileController = new FileController(fileService);
+        fileController = new FileController(fileService, path.toString());
     }
 
     @Test
