@@ -1,8 +1,6 @@
 package com.donghoonkhan.httpfileserver.controller;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 import com.donghoonkhan.httpfileserver.model.DirectoryResponse;
@@ -13,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,13 +51,24 @@ public class DirectoryController {
             @RequestParam(required = true, value = "directory")String directory) {
 
         try {
-            if (Files.exists(Paths.get(directory))) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Directory already exists");
-            }
             directoryService.createDirectory(directory);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+    
+    @ApiOperation(value = "Delete directory")
+    @DeleteMapping(value = "/directory")
+    public ResponseEntity<Void> deleteDirectory(
+            @RequestParam(required = true, value = "directory")String directory) {
+
+        try {
+            directoryService.deleteDirectory(directory);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
 }
