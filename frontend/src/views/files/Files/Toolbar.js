@@ -24,9 +24,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+
+
 const Toolbar = ({ className, onExportClick, ...rest }) => {
   const classes = useStyles();
   const [modalOpen, setModalOpen] = useState(false);
+  const [newDirectoryModal, setNewDirectoryModal] = useState({open: false, value: ''});
+  
 
   const onModalChange = () => {
     setModalOpen(true);
@@ -46,6 +50,17 @@ const Toolbar = ({ className, onExportClick, ...rest }) => {
     setModalOpen(false);
   }
 
+  const onClickMakeDirectory = () => {
+
+    setNewDirectoryModal({open: true, value: ''});
+  }
+
+  const onChnageNewDirectoryModal = (e) => {
+    const data = {...newDirectoryModal};
+    setNewDirectoryModal({open : data.open, value : e.target.value});
+  } 
+
+
   return (
     <div
       className={clsx(classes.root, className)}
@@ -55,6 +70,10 @@ const Toolbar = ({ className, onExportClick, ...rest }) => {
         display="flex"
         justifyContent="flex-end"
       >
+        
+        <Button className={classes.importButton} onClick={onClickMakeDirectory}>
+          NewFolder
+        </Button>
         <Button className={classes.importButton} onClick={onModalChange}>
           Import
         </Button>
@@ -89,6 +108,12 @@ const Toolbar = ({ className, onExportClick, ...rest }) => {
       </Box>
       <Modal open={modalOpen}>
         <input type="file" onChange={(e) => {onFileUpload(e)}}></input>
+        <Button onClick={onConfirmFileUpload}>확인</Button>
+        <Button onClick={onCloseModal}>취소</Button>
+      </Modal>
+
+      <Modal open={newDirectoryModal.open}>
+        <input onChange={onChnageNewDirectoryModal}></input>
         <Button onClick={onConfirmFileUpload}>확인</Button>
         <Button onClick={onCloseModal}>취소</Button>
       </Modal>

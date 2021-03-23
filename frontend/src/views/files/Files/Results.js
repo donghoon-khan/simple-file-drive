@@ -21,11 +21,6 @@ import {
 } from '@material-ui/core';
 import { Save as SaveIcon, Delete as DeleteIcon } from '@material-ui/icons';
 
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons'
-
-
-
 const useStyles = makeStyles((theme) => ({
   root: {},
   avatar: {
@@ -77,7 +72,6 @@ const Results = ({ className, route, files, setfiles, onDoubleClick, onRemoveRou
     console.log(newFiles);
 
     setfiles(newFiles);
-    // setSelectedCustomerIds(newSelectedCustomerIds);
   };
 
   const handleLimitChange = (event) => {
@@ -99,27 +93,15 @@ const Results = ({ className, route, files, setfiles, onDoubleClick, onRemoveRou
       link.click();
     });
   }
-  const data = [
-    {
-      "type": "DIRECTORY",
-      "name": "childDirectory",
-      "path": ".\\test-data\\childDirectory",
-      "mimeType": null
-    },
-  ];
 
-  const onDbClick = (name) =>{
-    if(name==='...'){
+  const onDbClick = (name) => {
+    if (name === '...') {
       onRemoveRoute();
-    }else{
+    } else {
       onDoubleClick(name);
     }
   }
 
-  
-
-  // onRemoveRoute
-  // console.log(route);
   return (
     <Card
       className={clsx(classes.root, className)}
@@ -154,32 +136,29 @@ const Results = ({ className, route, files, setfiles, onDoubleClick, onRemoveRou
             </TableHead>
             <TableBody>
               {route.length > 1 ?
-              <TableRow
-              hover
-              
-              onDoubleClick={() => { onDbClick('...') } }
-              // onClick={onDbClick}
-            >
-              <TableCell padding="checkbox">
+                <TableRow
+                  hover
+                  onDoubleClick={() => { onDbClick('...') }}
+                >
+                  <TableCell padding="checkbox">
+                  </TableCell>
+                  <TableCell>
+                    ...
               </TableCell>
-              <TableCell>
-                ...
-              </TableCell>
-              <TableCell>
-              </TableCell>
-              <TableCell>
-              </TableCell>
-              <TableCell>
-              </TableCell>
-            </TableRow>:
-            null}
+                  <TableCell>
+                  </TableCell>
+                  <TableCell>
+                  </TableCell>
+                  <TableCell>
+                  </TableCell>
+                </TableRow> :
+                null}
               {files.slice(0, limit).map((file, idx) => (
                 <TableRow
                   hover
                   key={file.name}
                   selected={file.check === undefined ? false : file.check}
-                  onDoubleClick={() => { onDbClick(file.name) } }
-                  // onClick={onDbClick}
+                  onDoubleClick={() => { file.name.includes('.') ? null : onDbClick(file.name) }}
                 >
                   <TableCell padding="checkbox">
 
@@ -187,7 +166,6 @@ const Results = ({ className, route, files, setfiles, onDoubleClick, onRemoveRou
                       <Checkbox
                         checked={file.check === undefined ? false : file.check}
                         onChange={(event) => handleSelectOne(event, idx)}
-                      // value={file.check===undefined ? false : file.check }
                       /> : null}
 
                   </TableCell>
@@ -210,23 +188,23 @@ const Results = ({ className, route, files, setfiles, onDoubleClick, onRemoveRou
                   </TableCell>
                   <TableCell>
                     {
-                      file.name.includes('.') ? 
-                      <>
-                        <Button
-                      variant="contained"
-                      color="secondary"
-                      className={classes.button}
-                      startIcon={<SaveIcon />}
-                      onClick={()=>{onClickExport(file)}}
-                    >SAVE</Button>
+                      file.name.includes('.') ?
+                        <>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            className={classes.button}
+                            startIcon={<SaveIcon />}
+                            onClick={() => { onClickExport(file) }}
+                          >SAVE</Button>
 
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      className={classes.button}
-                      startIcon={<DeleteIcon />}
-                    >Delete</Button>
-                      </> : null
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            startIcon={<DeleteIcon />}
+                          >Delete</Button>
+                        </> : null
                     }
 
                   </TableCell>
