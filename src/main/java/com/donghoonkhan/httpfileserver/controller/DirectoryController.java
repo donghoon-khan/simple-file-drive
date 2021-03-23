@@ -41,7 +41,7 @@ public class DirectoryController {
             }
             return ResponseEntity.ok().body(directoryService.getListDirectories(directory));
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }
 
@@ -54,7 +54,7 @@ public class DirectoryController {
             directoryService.createDirectory(directory);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }
     
@@ -67,8 +67,7 @@ public class DirectoryController {
             directoryService.deleteDirectory(directory);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }
-
 }

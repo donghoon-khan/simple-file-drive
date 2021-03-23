@@ -2,7 +2,6 @@ package com.donghoonkhan.httpfileserver.service.impl;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,9 +16,7 @@ import com.donghoonkhan.httpfileserver.service.FileService;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -50,16 +47,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public Resource getFileAsResource(String fileName) throws IOException {
         Path filePath = Paths.get(fileName);
-        try {
-            Resource resource = new UrlResource(filePath.toUri());
-            if (!Files.isDirectory(filePath) && resource.exists()) {
-                return resource;
-            } else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
-        } catch (MalformedURLException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        return new UrlResource(filePath.toUri());
     }
 
     @Override
