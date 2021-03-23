@@ -1,6 +1,8 @@
 package com.donghoonkhan.httpfileserver.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -61,6 +64,23 @@ public class FileController {
                     .body(resource);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "Rename/Move file")
+    @PutMapping("/file")
+    public ResponseEntity<Void> renameAndMoveFile(
+            @RequestParam(required = true, value = "src") String src,
+            @RequestParam(required = true, value = "dst") String dst,
+            @RequestParam(required = false, value = "overwrite", defaultValue = "false") Boolean overwrite) {
+
+        try {
+            fileService.moveFile(src, dst, overwrite);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (FileAlreadyExistsException|FileNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

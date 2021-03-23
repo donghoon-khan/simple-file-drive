@@ -11,4 +11,5 @@ public interface FileService {
     
     public Resource getFileAsResource(String file) throws IOException;
     public List<FileResponse> getListFiles(String directory) throws IOException;
+    public void moveFile(String src, String dst, Boolean overwrite) throws IOException;
 }

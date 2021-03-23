@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,6 +59,18 @@ public class FileServiceImpl implements FileService {
             }
         } catch (MalformedURLException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public void moveFile(String src, String dst, Boolean overwrite) throws IOException {
+        Path srcPath = Paths.get(src);
+        Path dstPath = Paths.get(dst);
+
+        if (overwrite.booleanValue()) {
+            Files.move(srcPath, dstPath, StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            Files.move(srcPath, dstPath);
         }
     }
 }
