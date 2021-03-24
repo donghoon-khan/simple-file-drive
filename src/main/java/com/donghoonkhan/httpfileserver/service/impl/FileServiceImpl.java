@@ -3,6 +3,7 @@ package com.donghoonkhan.httpfileserver.service.impl;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -14,9 +15,11 @@ import java.util.stream.Stream;
 import com.donghoonkhan.httpfileserver.model.FileResponse;
 import com.donghoonkhan.httpfileserver.service.FileService;
 
+import org.apache.tomcat.jni.File;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -60,5 +63,18 @@ public class FileServiceImpl implements FileService {
         } else {
             Files.move(srcPath, dstPath);
         }
+    }
+
+    @Override
+    public void storeFile(String directory, MultipartFile file) throws IOException {
+        
+        Path directoryPath = Paths.get(directory);
+        if (!Files.isDirectory(directoryPath)) {
+            throw new NotDirectoryException(directory);
+        }
+        
+        Path filePath = Paths.get(directory + "/" + file.getOriginalFilename());
+        byte[] bytes = file.getBytes();
+        Files.write(filePath, bytes);
     }
 }

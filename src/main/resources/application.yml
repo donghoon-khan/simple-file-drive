@@ -1,6 +1,7 @@
 server:
   port: 8080
   error:
+    include-exception: true
     include-message: always
 
 spring:
@@ -9,4 +10,5 @@ spring:
       enabled: true
       max-file-size: 1GB
       max-request-size: 1GB
+
 rootPath: ./test-data
