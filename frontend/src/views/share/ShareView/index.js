@@ -11,31 +11,31 @@ let cntrlIsPressed = false;
 let shiftIsPressed = false;
 
 document.addEventListener('keydown', (e) => {
-  
-  if(e.key==='Control'){
+
+  if (e.key === 'Control') {
 
     cntrlIsPressed = true;
 
-  }else if(e.key === 'Shift'){
+  } else if (e.key === 'Shift') {
 
     shiftIsPressed = true;
 
   }
-  
+
 
 })
 
 
-document.addEventListener('keyup', (e)=>{
+document.addEventListener('keyup', (e) => {
 
   // cntrlIsPressed = false;
-  console.log('keyup', e);
-  console.log(e.which)
-  if(e.key==='Control'){
+  // console.log('keyup', e);
+  
+  if (e.key === 'Control') {
 
     cntrlIsPressed = false
 
-  }else if(e.key === 'Shift'){
+  } else if (e.key === 'Shift') {
 
     shiftIsPressed = false;
 
@@ -43,6 +43,8 @@ document.addEventListener('keyup', (e)=>{
 
 });
 
+
+let clickStartIndex = -1;
 
 const ShareView = () => {
 
@@ -52,12 +54,13 @@ const ShareView = () => {
   const [path, setPath] = useState(['./test-data']);
   const [modalOpen, setModalOpen] = useState(false);
   const [fileName, setFileName] = useState('');
+  const [dragRange, setDragRange] = useState(false);
 
   const focusRef = useRef(null);
   let mode = false;
   useEffect(() => {
 
-    findData('./test-data');
+    findData(path.join(''));
 
   }, []);
 
@@ -79,19 +82,74 @@ const ShareView = () => {
 
     const updateFile = [...files];
 
-    console.log('cntrlIsPressed', cntrlIsPressed);
+    console.log('cntrlIsPressed', cntrlIsPressed, 'shiftIsPressed', shiftIsPressed);
     // if(keyDown)
-    if(cntrlIsPressed){
+    if (cntrlIsPressed) {
 
       updateFile[idx].active = updateFile[idx].active ? false : true;
       setFiles(
         updateFile
       );
+      clickStartIndex = idx;
 
-    }else{
+    } else if (shiftIsPressed) {
+
+      console.log('여기', clickStartIndex, idx);
+
+      if (clickStartIndex === -1) {
+
+        console.log('여기111111111',clickStartIndex);
+
+        clickStartIndex = idx;
+        updateFile[idx].active = updateFile[idx].active ? false : true;
+
+      }else if (clickStartIndex < idx) {
+
+        console.log('여기22222222');
+
+        updateFile.forEach((file, index) => {
+
+          if (index >= clickStartIndex && index <= idx) {
+
+            console.log(index);
+            file.active = true;
+
+          }
+
+        })
+
+
+      } else {
+
+        console.log('여기333333');
+
+        updateFile.forEach((file, index) => {
+
+
+
+          if (index <= clickStartIndex && index >= idx) {
+
+            file.active = true;
+
+          }
+
+        })
+
+
+      }
+
+      // updateFile[idx].active = updateFile[idx].active ? false : true;
+
+      setFiles(
+        updateFile
+      );
+
+    } else {
 
       updateFile.forEach((d) => d.active = false);
       updateFile[idx].active = updateFile[idx].active ? false : true;
+      clickStartIndex = idx;
+      console.log('clickStartIndex', clickStartIndex);
       setFiles(
         updateFile
       );
@@ -123,13 +181,13 @@ const ShareView = () => {
 
   }
 
-  function onConfirmModal(){
+  function onConfirmModal() {
 
     if (fileName !== '' && !fileName.includes('.')) {
 
       axios.post(`/directory?directory=${path.join('')}/${fileName}`).then((res) => {
 
-        setFiles([...files, {name:fileName}]);
+        setFiles([...files, { name: fileName }]);
         alert('폴더를 생성했습니다.')
 
       })
@@ -145,33 +203,33 @@ const ShareView = () => {
 
   }
 
-  function onCancelModal () {
+  function onCancelModal() {
 
     setModalOpen(false);
     setFileName('');
 
   }
 
-  function onChanageFileName (e) {
+  function onChanageFileName(e) {
 
     setFileName(e.target.value);
 
   }
 
-  function onClickBread (pathName) {
-    
+  function onClickBread(pathName) {
+
     const pathIndex = path.findIndex(item => {
 
-    {
+      {
 
-      console.log(item, pathName);
+        console.log(item, pathName);
 
-      if(item === pathName) return true;
+        if (item === pathName) return true;
 
-    
-    }
-      
-      
+
+      }
+
+
     })
 
     if (pathIndex !== -1) {
@@ -193,75 +251,62 @@ const ShareView = () => {
 
   let startX = 0;
   let startY = 0;
-  
+
 
   document.addEventListener('mousemove', (e) => {
 
-    // console.log(clientX);
-    // console.log(clientY);
-    if(mode){
+    if (mode) {
 
       let x = e.clientX;
       let y = e.clientY;
-  
-      
-      // console.log('asdsadsad', startX, startY, e.clientX, e.clientY);
-  
+
       const width = Math.max(x - startX, startX - x);
       const left = Math.min(startX, x);
-      // console.log('focusRef', focusRef);
-      // focusRef.current.style.left = left;
-      // focusRef.current.style.width = width;
-  
-      // console.log('focusRef', focusRef);
       const height = Math.max(y - startY, startY - y);
       const top = Math.min(startY, y);
-      // focusRef.current.style.height = height;
-      // focusRef.current.style.top = top;
-      // console.log(width, left, top, height);
-      // focus.css('top', top);
-      // focus.css('height', height);
 
     }
 
 
   })
 
-  
-  function onMouseDown (e) {
+
+  function onMouseDown(e) {
 
     mode = true;
-    console.log('onMouseDown', startX);
     startX = e.clientX;
     startY = e.clientY;
+    
+    // setFiles(files.map(file => {
+      
+    //   file.active = false; return file
+    
+    // })
+    // );
+    // setDragRange(true);
+    focusRef.current.style.display = 'block';
 
   }
 
 
   function onMouseMove(e){
     
-    // console.log('onMouseMove');
-    if(mode){
-      
+    if (mode) {
+
       let x = e.clientX;
       let y = e.clientY;
   
-      
-      // console.log('asdsadsad', startX, startY, e.clientX, e.clientY);
-  
       const width = Math.max(x - startX, startX - x);
       const left = Math.min(startX, x);
-      // console.log('focusRef', focusRef);
-      focusRef.current.style.left = left;
+      focusRef.current.style.left = `${left}px`;
       console.log(left);
       focusRef.current.style.width = `${width}px`;
   
-      // console.log('focusRef', focusRef);
       const height = Math.max(y - startY, startY - y);
       const top = Math.min(startY, y);
       focusRef.current.style.height = `${height}px`;
-      focusRef.current.style.top = `${top}`;
-      focusRef.current.style.zIndex='2';
+      focusRef.current.style.top = `${top}px`;
+      focusRef.current.style.zIndex='50';
       // focusRef.current.style.cssText=
       // console.log(width, left, top, height, focusRef.current.style);
       // focus.css('top', top);
@@ -271,14 +316,20 @@ const ShareView = () => {
 
   }
 
-  function onMouseUp () {
+  function onMouseUp() {
 
-    mode=false;
+    mode = false;
     console.log(focusRef);
     console.log('onMouseUp');
-
+    setDragRange(false);
+    focusRef.current.style.display = 'none';
+    focusRef.current.style.height = `0px`;
+    focusRef.current.style.width = `0px`;
+    focusRef.current.style.top = `0px`;
+    focusRef.current.style.left = `0px`;
+    
   }
-  
+
   console.log(files);
   return (
     <>
@@ -304,20 +355,21 @@ const ShareView = () => {
                   onFolderClick={onFolderClick}
                   prevFolderClick={prevFolderClick}
                 />
+                {/* <div className={`dragRange ${dragRange ? '' : 'hidden'}`} ref={focusRef}></div> */}
                 <div className="dragRange" ref={focusRef}></div>
               </main>
             </div>
           </Box>
-          
+
         </Container>
         <Modal open={modalOpen}>
           <div className="modal-Wrapper">
             <input placeholder="파일명을 입력하세요" onChange={onChanageFileName} value={fileName}></input>
-            <Button variant="contained" color="secondary"  onClick={onConfirmModal}>확인</Button>
+            <Button variant="contained" color="secondary" onClick={onConfirmModal}>확인</Button>
             <Button variant="contained" color="primary" onClick={onCancelModal}>취소</Button>
           </div>
         </Modal>
-        
+
       </Card>
 
     </>
