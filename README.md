@@ -15,4 +15,5 @@ Application to HTTP File Server.
 - [ ] Delete directory
 - [ ] Upload file
 - [ ] Download file
+- [ ] Dockerize
   
