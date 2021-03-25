@@ -44,11 +44,16 @@ main {
 }
 
 .Breadcrumb > div::after {
-    content: " -";
+    content: " >";
 }
 
 .Breadcrumb > div:last-child::after {
     content: ""
+}
+
+.Breadcrumb > div:hover{
+    background-color: #b1bfca;
+    cursor: pointer;
 }
 
 
@@ -171,4 +176,11 @@ nav {
     display: flex;
     align-content: center;
     justify-content: center;
+}
+
+.dragRange {
+    background-color : #e3f2fd;
+    border: 1px solid #b1bfca;
+    position: fixed;
+    /*z-index: 50; */
 }
