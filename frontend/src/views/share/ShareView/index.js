@@ -55,9 +55,12 @@ const ShareView = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [fileName, setFileName] = useState('');
   const [dragRange, setDragRange] = useState(false);
+  const [open2 , setOpen2] = useState(false);
+  const [mode , setMode] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const focusRef = useRef(null);
-  let mode = false;
+  
   useEffect(() => {
 
     findData(path.join(''));
@@ -249,34 +252,11 @@ const ShareView = () => {
 
   }
 
-  let startX = 0;
-  let startY = 0;
-
-
-  document.addEventListener('mousemove', (e) => {
-
-    if (mode) {
-
-      let x = e.clientX;
-      let y = e.clientY;
-
-      const width = Math.max(x - startX, startX - x);
-      const left = Math.min(startX, x);
-      const height = Math.max(y - startY, startY - y);
-      const top = Math.min(startY, y);
-
-    }
-
-
-  })
-
-
   function onMouseDown(e) {
 
-    mode = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    
+    setMode(true);
+
+    setPosition({x: e.clientX, y: e.clientY})
     // setFiles(files.map(file => {
       
     //   file.active = false; return file
@@ -291,19 +271,43 @@ const ShareView = () => {
 
   function onMouseMove(e){
     
+    e.preventDefault();
+    // console.log('mode출력', mode);
+
     if (mode) {
 
+      // console.log(e);
       let x = e.clientX;
       let y = e.clientY;
-  
-      const width = Math.max(x - startX, startX - x);
-      const left = Math.min(startX, x);
+      // console.dir();
+      const pointElement = document.elementFromPoint(x,y);
+
+      if(open2) {
+
+        setOpen2(false);
+
+      }else{
+        
+        setOpen2(true);
+
+      }
+      if(pointElement.nodeName === 'IMG'){
+
+        if(pointElement.parentElement.className==='Node '){
+
+          pointElement.parentElement.className = 'Node active';
+
+        }
+        
+      }
+      const width = Math.max(x - position.x, position.x - x);
+      const left = Math.min(position.x, x);
       focusRef.current.style.left = `${left}px`;
-      console.log(left);
+      
       focusRef.current.style.width = `${width}px`;
   
-      const height = Math.max(y - startY, startY - y);
-      const top = Math.min(startY, y);
+      const height = Math.max(y - position.y, position.y - y);
+      const top = Math.min(position.y, y);
       focusRef.current.style.height = `${height}px`;
       focusRef.current.style.top = `${top}px`;
       focusRef.current.style.zIndex='50';
@@ -318,7 +322,7 @@ const ShareView = () => {
 
   function onMouseUp() {
 
-    mode = false;
+    setMode(false);
     console.log(focusRef);
     console.log('onMouseUp');
     setDragRange(false);
