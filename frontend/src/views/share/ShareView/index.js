@@ -55,9 +55,9 @@ const ShareView = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [fileName, setFileName] = useState('');
   const [dragRange, setDragRange] = useState(false);
-  const [open2 , setOpen2] = useState(false);
   const [mode , setMode] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  
 
   const focusRef = useRef(null);
   
@@ -84,31 +84,20 @@ const ShareView = () => {
   function onNodeClick(idx, file) {
 
     const updateFile = [...files];
-
-    console.log('cntrlIsPressed', cntrlIsPressed, 'shiftIsPressed', shiftIsPressed);
-    // if(keyDown)
     if (cntrlIsPressed) {
 
       updateFile[idx].active = updateFile[idx].active ? false : true;
-      setFiles(
-        updateFile
-      );
+      setFiles(updateFile);
       clickStartIndex = idx;
 
     } else if (shiftIsPressed) {
 
-      console.log('여기', clickStartIndex, idx);
-
       if (clickStartIndex === -1) {
-
-        console.log('여기111111111',clickStartIndex);
 
         clickStartIndex = idx;
         updateFile[idx].active = updateFile[idx].active ? false : true;
 
       }else if (clickStartIndex < idx) {
-
-        console.log('여기22222222');
 
         updateFile.forEach((file, index) => {
 
@@ -124,11 +113,7 @@ const ShareView = () => {
 
       } else {
 
-        console.log('여기333333');
-
         updateFile.forEach((file, index) => {
-
-
 
           if (index <= clickStartIndex && index >= idx) {
 
@@ -152,7 +137,6 @@ const ShareView = () => {
       updateFile.forEach((d) => d.active = false);
       updateFile[idx].active = updateFile[idx].active ? false : true;
       clickStartIndex = idx;
-      console.log('clickStartIndex', clickStartIndex);
       setFiles(
         updateFile
       );
@@ -229,9 +213,7 @@ const ShareView = () => {
 
         if (item === pathName) return true;
 
-
       }
-
 
     })
 
@@ -242,64 +224,47 @@ const ShareView = () => {
       setPath(newPath);
       findData(newPath.join(''));
 
-    } else {
-
-      console.log('pathIndex error');
-
-    }
-
-
+    } 
 
   }
 
   function onMouseDown(e) {
 
     setMode(true);
-
+    console.log('e', e);
     setPosition({x: e.clientX, y: e.clientY})
-    // setFiles(files.map(file => {
-      
-    //   file.active = false; return file
-    
-    // })
-    // );
-    // setDragRange(true);
     focusRef.current.style.display = 'block';
+    if(!e.shiftKey && !e.ctrlKey){
+
+      clearSelectedFiles();
+
+    }
 
   }
 
+  function boxIntersects (boxA, boxB) {
+
+    if(boxA.left <= boxB.left + boxB.width &&
+      boxA.left + boxA.width >= boxB.left &&
+      boxA.top <= boxB.top + boxB.height &&
+      boxA.top + boxA.height >= boxB.top) {
+
+      return true;
+
+    }
+
+    return false;
+
+  }
 
   function onMouseMove(e){
     
     e.preventDefault();
-    // console.log('mode출력', mode);
 
     if (mode) {
 
-      // console.log(e);
       let x = e.clientX;
       let y = e.clientY;
-      // console.dir();
-      const pointElement = document.elementFromPoint(x,y);
-
-      if(open2) {
-
-        setOpen2(false);
-
-      }else{
-        
-        setOpen2(true);
-
-      }
-      if(pointElement.nodeName === 'IMG'){
-
-        if(pointElement.parentElement.className==='Node '){
-
-          pointElement.parentElement.className = 'Node active';
-
-        }
-        
-      }
       const width = Math.max(x - position.x, position.x - x);
       const left = Math.min(position.x, x);
       focusRef.current.style.left = `${left}px`;
@@ -311,27 +276,101 @@ const ShareView = () => {
       focusRef.current.style.height = `${height}px`;
       focusRef.current.style.top = `${top}px`;
       focusRef.current.style.zIndex='50';
-      // focusRef.current.style.cssText=
-      // console.log(width, left, top, height, focusRef.current.style);
-      // focus.css('top', top);
-      // focus.css('height', height);
+
+      const nodes = document.getElementsByClassName('Node');
+      
+      Array.prototype.forEach.call(nodes, (node, idx) => {
+
+        console.log(node.offsetTop, node.offsetLeft, node.clientWidth, node.clientHeight);
+        if (boxIntersects(
+          {
+            top, left, width, height
+          },
+          {
+            top: node.offsetTop,
+            left: node.offsetLeft,
+            width: node.clientWidth,
+            height: node.clientHeight
+          })) {
+
+          node.className = 'Node active';
+
+        } else {
+
+          node.className = 'Node';
+
+        }
+
+      })
 
     }
 
   }
 
+  function clearSelectedFiles () {
+
+    const nodes = document.getElementsByClassName('Node');
+    Array.prototype.forEach.call(nodes, (node) => {
+
+      node.className = 'Node ';
+      
+    })
+
+    const newFiles = files.map((file) => {
+
+      file.active = false;
+      return file;
+
+    })
+
+    setFiles(newFiles)
+    
+  }
+  
   function onMouseUp() {
 
     setMode(false);
-    console.log(focusRef);
-    console.log('onMouseUp');
     setDragRange(false);
+    
     focusRef.current.style.display = 'none';
     focusRef.current.style.height = `0px`;
     focusRef.current.style.width = `0px`;
     focusRef.current.style.top = `0px`;
     focusRef.current.style.left = `0px`;
+    setActiveFiles();
     
+  }
+
+  function setActiveFiles () {
+
+    const activeNodes = document.getElementsByClassName('Node active');
+
+    console.log(setActiveFiles)
+    const newFiles = files;
+    newFiles.forEach(file => {
+
+      file.active = false;
+
+    })
+    
+    Array.prototype.forEach.call(activeNodes, activeNode => {
+
+      console.dir( activeNode );
+      newFiles.forEach(file => {
+
+        console.log(activeNode.className, activeNode.innerText, file.name);
+
+        if (activeNode.className.includes('active') && activeNode.innerText === file.name) {
+
+          file.active = true;
+
+        } 
+
+      })
+
+    })
+    setFiles(newFiles);
+
   }
 
   console.log(files);
