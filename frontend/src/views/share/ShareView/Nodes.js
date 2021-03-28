@@ -118,6 +118,7 @@ class Nodes extends Component {
 
               return (
                 <div key={file.name}
+                  data-idx={idx}
                   className={`Node ${file.active ? 'active' : ''}`}
                   onClick={() => { this.onNodeClick(idx, file) }}
                   onDoubleClick={() => { this.folderClick(file.name) }}>
