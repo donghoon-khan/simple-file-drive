@@ -45,6 +45,25 @@ public class DirectoryServiceTests {
     }
 
     @Test
+    void Test_MoveDirectory() throws IOException {
+        DirectoryService directoryService = new DirectoryServiceImpl();
+
+        Path srcDir = directory.resolve("src");
+        Path testDir = directory.resolve("test");
+        Files.createDirectory(srcDir);
+        Files.createDirectory(testDir);
+
+        assertThrows(FileSystemNotFoundException.class,
+                () -> directoryService.moveDirectory(directory.toString() + "/target", "/src", false));
+        assertThrows(FileSystemAlreadyExistsException.class, 
+                () -> directoryService.moveDirectory(directory.toString() + "/src", directory.toString() + "/test", false));
+        assertDoesNotThrow(() -> directoryService.moveDirectory(directory.toString() + "/src",
+                directory.toString() + "/target", false));
+        assertDoesNotThrow(() -> directoryService.moveDirectory(directory.toString() + "/test",
+                directory.toString() + "/target", true));
+    }
+
+    @Test
     void Test_DeleteDirectory() throws IOException {
         DirectoryService directoryService = new DirectoryServiceImpl();
 

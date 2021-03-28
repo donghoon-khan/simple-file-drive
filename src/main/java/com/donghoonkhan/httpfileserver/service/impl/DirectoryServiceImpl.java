@@ -8,6 +8,7 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,7 +28,6 @@ public class DirectoryServiceImpl implements DirectoryService {
     @Override
     public List<FileObject> getDirectory(String directory) throws IOException {
         Path path = Paths.get(directory);
-
         if (!Files.isDirectory(path)) {
             throw new FileSystemNotFoundException(directory);
         }
@@ -55,7 +55,6 @@ public class DirectoryServiceImpl implements DirectoryService {
     @Override
     public void createDirectory(String directory) throws IOException {
         Path path = Paths.get(directory);
-
         if(Files.exists(path)) {
             throw new FileSystemAlreadyExistsException(directory);
         }
@@ -64,9 +63,25 @@ public class DirectoryServiceImpl implements DirectoryService {
     }
 
     @Override
+    public void moveDirectory(String source, String target, Boolean force) throws IOException {
+        Path srcPath = Paths.get(source);
+        Path targetPath = Paths.get(target);
+        if (!Files.isDirectory(srcPath)) {
+            throw new FileSystemNotFoundException(source);
+        } else if (!force.booleanValue() && Files.exists(targetPath)) {
+            throw new FileSystemAlreadyExistsException(target);
+        }
+
+        if (force.booleanValue()) {
+            Files.move(srcPath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            Files.move(srcPath, targetPath);
+        }
+    }
+
+    @Override
     public void deleteDirectory(String directory) throws IOException {
         Path path = Paths.get(directory);
-
         if (!Files.isDirectory(path)) {
             throw new FileSystemNotFoundException(directory);
         }
