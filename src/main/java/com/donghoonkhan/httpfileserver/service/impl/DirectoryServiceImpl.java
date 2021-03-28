@@ -70,7 +70,7 @@ public class DirectoryServiceImpl implements DirectoryService {
 
         Path path = Paths.get(directory);
         if (!Files.isDirectory(path)) {
-            throw new FileSystemNotFoundException(directory);
+            throw new FileSystemNotFoundException("Not found directory: " + directory);
         }
 
         List<FileObject> fileObjects = new ArrayList<>();

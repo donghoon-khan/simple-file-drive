@@ -1,6 +1,7 @@
 package com.donghoonkhan.httpfileserver.controller;
 
 import java.io.IOException;
+import java.nio.file.FileSystemNotFoundException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import com.donghoonkhan.httpfileserver.model.FileObject;
 import com.donghoonkhan.httpfileserver.service.DirectoryService;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,26 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/directory")
 public class DirectoryController {
 
 
     private static final String CONTEXT_PATH = "/directory";
     private final DirectoryService directoryService;
-    private final String rootPath;
-
-    public DirectoryController(DirectoryService directoryService, @Value("${rootPath}")String rootPath) {
-        this.directoryService = directoryService;
-        this.rootPath = rootPath;
-    }
 
     @GetMapping("/**")
-    public ResponseEntity<List<FileObject>> retrieveDirectory(HttpServletRequest request) {
-        try {
-            return ResponseEntity.ok().body(directoryService.getDirectory(getRelPath(request)));
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
+    public ResponseEntity<List<FileObject>> retrieveDirectory(HttpServletRequest request) throws IOException{
+        return ResponseEntity.ok().body(directoryService.getDirectory(getRelPath(request)));
     }
 
     private String getRelPath(HttpServletRequest request) {
