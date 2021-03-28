@@ -1,22 +1,15 @@
 package com.donghoonkhan.httpfileserver.service.impl;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
-import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.donghoonkhan.httpfileserver.model.FileResponse;
 import com.donghoonkhan.httpfileserver.service.FileService;
 
 import org.springframework.core.io.Resource;
@@ -56,15 +49,16 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void storeFile(String directory, MultipartFile file) throws IOException {
+    public void storeFile(String directory, MultipartFile file, Boolean force) throws IOException {
         Path directoryPath = Paths.get(directory);
-
+        String dstFilePath = directory + "/" + file.getOriginalFilename();
         if (!Files.isDirectory(directoryPath)) {
-            throw new NotDirectoryException(directory);
+            throw new FileSystemNotFoundException(directory);
+        } else if(!force.booleanValue() && Files.exists(Paths.get(dstFilePath))) {
+            throw new FileAlreadyExistsException(dstFilePath);
         }
         
-        Path filePath = Paths.get(directory + "/" + file.getOriginalFilename());
-        byte[] bytes = file.getBytes();
-        Files.write(filePath, bytes);
+        File dstFile = new File(dstFilePath);
+        file.transferTo(dstFile);
     }
 }

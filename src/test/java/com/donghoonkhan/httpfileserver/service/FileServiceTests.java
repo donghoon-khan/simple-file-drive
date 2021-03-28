@@ -16,6 +16,7 @@ import com.donghoonkhan.httpfileserver.service.impl.FileServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
 public class FileServiceTests {
     
@@ -54,17 +55,5 @@ public class FileServiceTests {
         assertThrows(FileSystemNotFoundException.class, 
                 () -> fileService.moveFile(directory.toString() + "/src", directory.toString() + "/nullDir/src", false));
         assertDoesNotThrow(() -> fileService.moveFile(directory.toString() + "/src", directory.toString() + "/dir/test", false));
-    }
-
-    @Test
-    void Test_LoadFileAsResource() throws Exception {
-
-        Path file = directory.resolve("test.test");
-        Files.createFile(file);
-
-        FileService fileService = new FileServiceImpl();
-        Resource resource = fileService.getFileAsResource(directory.toString() + "/test.test");
-        assertEquals(file.toUri(), resource.getURI());
-
     }
 }
