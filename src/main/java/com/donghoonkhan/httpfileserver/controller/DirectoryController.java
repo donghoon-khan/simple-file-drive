@@ -3,7 +3,10 @@ package com.donghoonkhan.httpfileserver.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.donghoonkhan.httpfileserver.model.DirectoryResponse;
+import com.donghoonkhan.httpfileserver.model.FileObject;
 import com.donghoonkhan.httpfileserver.service.DirectoryService;
 
 import io.swagger.annotations.ApiOperation;
@@ -13,15 +16,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-
 @RestController
+@RequestMapping(value = "/directory")
 public class DirectoryController {
 
+
+    private static final String CONTEXT_PATH = "/directory";
     private final DirectoryService directoryService;
     private final String rootPath;
 
@@ -30,7 +37,23 @@ public class DirectoryController {
         this.rootPath = rootPath;
     }
 
-    @ApiOperation(value = "Retrieve directory")
+    @GetMapping("/**")
+    public ResponseEntity<List<FileObject>> retrieveDirectory(HttpServletRequest request) {
+        try {
+            return ResponseEntity.ok().body(directoryService.getDirectory(getRelPath(request)));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    private String getRelPath(HttpServletRequest request) {
+        if (request.getRequestURI().equals(CONTEXT_PATH)) {
+            return "/";
+        }
+        return request.getRequestURI().split(request.getContextPath() + CONTEXT_PATH)[1];
+    }
+
+    /*@ApiOperation(value = "Retrieve directory")
     @GetMapping(value = "/directories")
     public ResponseEntity<List<DirectoryResponse>> retrieveDirectory(
             @RequestParam(required = false, value = "directory")String directory) {
@@ -69,5 +92,5 @@ public class DirectoryController {
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
-    }
+    }*/
 }
