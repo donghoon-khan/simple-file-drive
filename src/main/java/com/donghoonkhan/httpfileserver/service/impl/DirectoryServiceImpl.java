@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,12 +27,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DirectoryServiceImpl implements DirectoryService {
-
-    @Override
-    public void createDirectory(String directory) throws IOException {
-        Path path = Paths.get(directory);
-        Files.createDirectory(path);
-    }
 
     @Override
     public List<DirectoryResponse> getListDirectories(String directory) throws IOException {
@@ -91,5 +86,16 @@ public class DirectoryServiceImpl implements DirectoryService {
             fileObjects.add(fileObject);
         }
         return fileObjects;        
+    }
+
+    @Override
+    public void createDirectory(String directory) throws IOException {
+        Path path = Paths.get(directory);
+
+        if(Files.exists(path)) {
+            throw new FileSystemAlreadyExistsException("Already exists directory: " + directory);
+        }
+
+        Files.createDirectory(path);
     }
 }

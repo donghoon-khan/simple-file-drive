@@ -30,20 +30,24 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping(value = "/directory")
 public class DirectoryController {
 
-
-    private static final String CONTEXT_PATH = "/directory";
     private final DirectoryService directoryService;
 
     @GetMapping("/**")
-    public ResponseEntity<List<FileObject>> retrieveDirectory(HttpServletRequest request) throws IOException{
+    public ResponseEntity<List<FileObject>> retrieveDirectory(HttpServletRequest request) throws IOException {
         return ResponseEntity.ok().body(directoryService.getDirectory(getRelPath(request)));
     }
 
+    @PostMapping("/**")
+    public ResponseEntity<Void> createDirectory(HttpServletRequest request) throws IOException {
+        directoryService.createDirectory(getRelPath(request));
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
     private String getRelPath(HttpServletRequest request) {
-        if (request.getRequestURI().equals(CONTEXT_PATH)) {
+        if (request.getRequestURI().equals("/directory")) {
             return "/";
         }
-        return request.getRequestURI().split(request.getContextPath() + CONTEXT_PATH)[1];
+        return request.getRequestURI().split(request.getContextPath() + "/directory")[1];
     }
 
     /*@ApiOperation(value = "Retrieve directory")

@@ -1,14 +1,16 @@
 package com.donghoonkhan.httpfileserver.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
+import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.donghoonkhan.httpfileserver.service.impl.DirectoryServiceImpl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -16,10 +18,6 @@ public class DirectoryServiceTests {
     
     @TempDir
     Path directory;
-
-    @BeforeEach
-    void setup() throws IOException {
-    }
 
     @Test
     void Test_GetDirectory() throws IOException {
@@ -35,4 +33,14 @@ public class DirectoryServiceTests {
         Files.createDirectory(directory2);
         assertEquals(4, directoryService.getDirectory(directory.toString()).size());
     }
+
+    @Test
+    void Test_CreateDirectory() throws IOException {
+        DirectoryService directoryService = new DirectoryServiceImpl();
+
+        assertDoesNotThrow(() -> directoryService.createDirectory(directory.toString() + "/test"));
+        assertThrows(FileSystemAlreadyExistsException.class, 
+                () -> directoryService.createDirectory(directory.toString() + "/test"));
+    }
+
 }
