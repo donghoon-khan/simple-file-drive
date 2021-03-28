@@ -30,10 +30,9 @@ public class DirectoryServiceImpl implements DirectoryService {
 
     @Override
     public List<DirectoryResponse> getListDirectories(String directory) throws IOException {
-
         Path path = Paths.get(directory);
-        try (Stream<Path> stream =  Files.list(path)) {
 
+        try (Stream<Path> stream =  Files.list(path)) {
             return stream.filter(entity -> Boolean.valueOf(Files.isDirectory(entity)))
                     .map(file -> {
                         try {
@@ -52,20 +51,11 @@ public class DirectoryServiceImpl implements DirectoryService {
     }
 
     @Override
-    public void deleteDirectory(String directory) throws IOException {
-
-        Files.walk(Paths.get(directory))
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .forEach(File::delete);
-    }
-
-    @Override
     public List<FileObject> getDirectory(String directory) throws IOException {
-
         Path path = Paths.get(directory);
+        
         if (!Files.isDirectory(path)) {
-            throw new FileSystemNotFoundException("Not found directory: " + directory);
+            throw new FileSystemNotFoundException(directory);
         }
 
         List<FileObject> fileObjects = new ArrayList<>();
@@ -93,9 +83,23 @@ public class DirectoryServiceImpl implements DirectoryService {
         Path path = Paths.get(directory);
 
         if(Files.exists(path)) {
-            throw new FileSystemAlreadyExistsException("Already exists directory: " + directory);
+            throw new FileSystemAlreadyExistsException(directory);
         }
 
         Files.createDirectory(path);
+    }
+
+    @Override
+    public void deleteDirectory(String directory) throws IOException {
+        Path path = Paths.get(directory);
+
+        if (!Files.isDirectory(path)) {
+            throw new FileSystemNotFoundException(directory);
+        }
+
+        Files.walk(Paths.get(directory))
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,19 @@ public class DirectoryController {
     @PostMapping("/**")
     public ResponseEntity<Void> createDirectory(HttpServletRequest request) throws IOException {
         directoryService.createDirectory(getRelPath(request));
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /*@PutMapping("/**")
+    public ResponseEntity<Void> renameAndMoveDirectory(@RequestParam(value = "target", required = true) String target, 
+            @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force, 
+            HttpServletRequest request) throws IOException {
+        
+    }*/
+
+    @DeleteMapping("/**")
+    public ResponseEntity<Void> deleteDirectory(HttpServletRequest request) throws IOException {
+        directoryService.deleteDirectory(getRelPath(request));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

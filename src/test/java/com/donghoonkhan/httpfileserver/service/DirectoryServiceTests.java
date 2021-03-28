@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.file.FileSystemAlreadyExistsException;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -43,4 +44,15 @@ public class DirectoryServiceTests {
                 () -> directoryService.createDirectory(directory.toString() + "/test"));
     }
 
+    @Test
+    void Test_DeleteDirectory() throws IOException {
+        DirectoryService directoryService = new DirectoryServiceImpl();
+
+        Path testDir = directory.resolve("test");
+        Files.createDirectory(testDir);
+
+        assertDoesNotThrow(() -> directoryService.deleteDirectory(directory.toString() + "/test"));
+        assertThrows(FileSystemNotFoundException.class,
+                () -> directoryService.deleteDirectory(directory.toString() + "/test"));
+    }
 }

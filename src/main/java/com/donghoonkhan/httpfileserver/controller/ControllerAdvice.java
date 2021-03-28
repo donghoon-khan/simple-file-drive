@@ -22,7 +22,7 @@ public class ControllerAdvice {
         ErrorResponse response = new ErrorResponse();
         response.setStatusCode(HttpStatus.NOT_FOUND.value());
         response.setTimeStamp(new Date());
-        response.setMessage(e.getMessage());
+        response.setMessage("Not found directory: " + e.getMessage());
         return response;
     }
 
@@ -32,7 +32,7 @@ public class ControllerAdvice {
         ErrorResponse response = new ErrorResponse();
         response.setStatusCode(HttpStatus.BAD_REQUEST.value());
         response.setTimeStamp(new Date());
-        response.setMessage(e.getMessage());
+        response.setMessage("Already exists directory: " + e.getMessage());
         return response;
     }
 
