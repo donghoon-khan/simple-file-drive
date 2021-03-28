@@ -9,5 +9,5 @@ public interface FileService {
     
     public Resource getFileAsResource(String file) throws IOException;
     public void storeFile(String directory, MultipartFile file) throws IOException;
-    public void moveFile(String src, String dst, Boolean overwrite) throws IOException;
+    public void moveFile(String source, String target, Boolean force) throws IOException;
 }

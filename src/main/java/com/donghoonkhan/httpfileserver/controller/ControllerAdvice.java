@@ -2,6 +2,7 @@ package com.donghoonkhan.httpfileserver.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystemNotFoundException;
 import java.util.Date;
@@ -44,6 +45,16 @@ public class ControllerAdvice {
         response.setStatusCode(HttpStatus.NOT_FOUND.value());
         response.setTimeStamp(new Date());
         response.setMessage("Not found file: " + e.getMessage());
+        return response;
+    }
+
+    @ExceptionHandler(value = {FileAlreadyExistsException.class})
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleFileAlreadyExistsException(FileAlreadyExistsException e) {
+        ErrorResponse response = new ErrorResponse();
+        response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        response.setTimeStamp(new Date());
+        response.setMessage("Already exists file: " + e.getMessage());
         return response;
     }
 

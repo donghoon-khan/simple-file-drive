@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -48,6 +47,15 @@ public class FileController {
                 .body(resource);
     }
 
+    @PutMapping("/**")
+    public ResponseEntity<Void> renameAndMoveFiley(@RequestParam(value = "target", required = true) String target, 
+            @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force, 
+            HttpServletRequest request) throws IOException {
+
+        fileService.moveFile(getRelPath(request), target, force);
+        return ResponseEntity.ok().build();
+    }
+
     private String getRelPath(HttpServletRequest request) {
         if (request.getRequestURI().equals("/file")) {
             return "/";
@@ -56,24 +64,7 @@ public class FileController {
     }
     
 
-    /*@ApiOperation(value = "Download file")
-    @GetMapping("/file")
-    public ResponseEntity<Resource> downloadFile(@RequestParam(required = true, value = "file")String file) {
-        try {
-            Resource resource = fileService.getFileAsResource(file);
-            String contentType = Files.probeContentType(Paths.get(file));
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
-    }
-
+    /*
     @ApiOperation(value = "Upload file")
     @PostMapping("/file")
     public ResponseEntity<Void> uploadFile(
@@ -87,21 +78,6 @@ public class FileController {
                 fileService.storeFile(directory, file);
             }
             return ResponseEntity.ok().build();
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
-        }
-    }
-
-    @ApiOperation(value = "Rename/Move file")
-    @PutMapping("/file")
-    public ResponseEntity<Void> renameAndMoveFile(
-            @RequestParam(required = true, value = "src") String src,
-            @RequestParam(required = true, value = "dst") String dst,
-            @RequestParam(required = false, value = "overwrite", defaultValue = "false") Boolean overwrite) {
-
-        try {
-            fileService.moveFile(src, dst, overwrite);
-            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }

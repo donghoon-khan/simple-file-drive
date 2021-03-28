@@ -3,6 +3,9 @@ package com.donghoonkhan.httpfileserver.service.impl;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystemAlreadyExistsException;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
@@ -35,21 +38,27 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void moveFile(String src, String dst, Boolean overwrite) throws IOException {
-        Path srcPath = Paths.get(src);
-        Path dstPath = Paths.get(dst);
-
-        if (overwrite.booleanValue()) {
-            Files.move(srcPath, dstPath, StandardCopyOption.REPLACE_EXISTING);
-        } else {
-            Files.move(srcPath, dstPath);
+    public void moveFile(String source, String target, Boolean force) throws IOException {
+        Path srcPath = Paths.get(source);
+        Path targetPath = Paths.get(target);
+        if (!Files.isRegularFile(srcPath)) {
+            throw new FileNotFoundException(source);
+        } else if(!Files.isDirectory(targetPath.getParent())) {
+            throw new FileSystemNotFoundException(targetPath.getParent().toString());
+        } else if(!force.booleanValue() && Files.exists(targetPath)) {
+            throw new FileAlreadyExistsException(target);
         }
+
+        if (force.booleanValue()) {
+            Files.move(srcPath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        Files.move(srcPath, targetPath);
     }
 
     @Override
     public void storeFile(String directory, MultipartFile file) throws IOException {
-        
         Path directoryPath = Paths.get(directory);
+
         if (!Files.isDirectory(directoryPath)) {
             throw new NotDirectoryException(directory);
         }
