@@ -10,6 +10,7 @@ import com.donghoonkhan.httpfileserver.service.DirectoryService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,11 +22,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(value = "/directory")
 public class DirectoryController {
 
     private final DirectoryService directoryService;
+    private final String basePath;
+
+    public DirectoryController(DirectoryService directoryService, @Value("${basePath}") String basePath) {
+        this.directoryService = directoryService;
+        this.basePath = basePath;
+    }
 
     @GetMapping("/**")
     public ResponseEntity<List<FileObject>> retrieveDirectory(HttpServletRequest request) throws IOException {
@@ -43,7 +49,8 @@ public class DirectoryController {
             @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force, 
             HttpServletRequest request) throws IOException {
         
-        directoryService.moveDirectory(getRelPath(request), target, force);
+        String targetURI  = target.startsWith("/") ? basePath + target : basePath + "/" + target;
+        directoryService.moveDirectory(getRelPath(request), targetURI, force);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -55,8 +62,8 @@ public class DirectoryController {
 
     private String getRelPath(HttpServletRequest request) {
         if (request.getRequestURI().equals("/directory")) {
-            return "/";
+            return basePath;
         }
-        return request.getRequestURI().split(request.getContextPath() + "/directory")[1];
+        return basePath + request.getRequestURI().split(request.getContextPath() + "/directory")[1];
     }
 }

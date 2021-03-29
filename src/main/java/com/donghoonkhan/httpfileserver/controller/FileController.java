@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.donghoonkhan.httpfileserver.service.FileService;
 import com.google.common.net.HttpHeaders;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(value = "/file")
 public class FileController {
     
     private final FileService fileService;
+    private final String basePath;
+
+    public FileController(FileService fileService, @Value("${basePath}") String basePath) {
+        this.fileService = fileService;
+        this.basePath = basePath;
+    }
 
     @GetMapping("/**")
     public ResponseEntity<Resource> downloadFile(HttpServletRequest request) throws IOException {
@@ -45,7 +49,8 @@ public class FileController {
             @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force, 
             HttpServletRequest request) throws IOException {
 
-        fileService.moveFile(getRelPath(request), target, force);
+        String targetURI  = target.startsWith("/") ? basePath + target : basePath + "/" + target;
+        fileService.moveFile(getRelPath(request), targetURI, force);
         return ResponseEntity.ok().build();
     }
 
@@ -60,8 +65,8 @@ public class FileController {
 
     private String getRelPath(HttpServletRequest request) {
         if (request.getRequestURI().equals("/file")) {
-            return "/";
+            return basePath;
         }
-        return request.getRequestURI().split(request.getContextPath() + "/file")[1];
+        return basePath + request.getRequestURI().split(request.getContextPath() + "/file")[1];
     }
 }
