@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.donghoonkhan.httpfileserver.model.FileObject;
 import com.donghoonkhan.httpfileserver.service.DirectoryService;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +18,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(value = "/directory")
@@ -33,17 +35,24 @@ public class DirectoryController {
         this.basePath = basePath;
     }
 
+    @ApiOperation(value = "Retrieve directory", notes = "Pass the relative path of the set basepath to URI.")
     @GetMapping("/**")
     public ResponseEntity<List<FileObject>> retrieveDirectory(HttpServletRequest request) throws IOException {
         return ResponseEntity.ok().body(directoryService.getDirectory(getRelPath(request)));
     }
 
+    @ApiOperation(value = "Create directory", notes = "Pass the relative path of the set basepath to URI.")
     @PostMapping("/**")
     public ResponseEntity<Void> createDirectory(HttpServletRequest request) throws IOException {
         directoryService.createDirectory(getRelPath(request));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @ApiOperation(value = "Rename/move directory", notes = "Pass the relative path of the set basepath to URI.")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "target", value = "Target path, Pass the relative path of the set basepath to URI.", required = true),
+        @ApiImplicitParam(name = "force", value = "Whether to overwrite.", required = false, defaultValue = "false")
+    })
     @PutMapping("/**")
     public ResponseEntity<Void> renameAndMoveDirectory(@RequestParam(value = "target", required = true) String target, 
             @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force, 
@@ -54,6 +63,7 @@ public class DirectoryController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @ApiOperation(value = "Delete directory", notes = "Pass the relative path of the set basepath to URI.")
     @DeleteMapping("/**")
     public ResponseEntity<Void> deleteDirectory(HttpServletRequest request) throws IOException {
         directoryService.deleteDirectory(getRelPath(request));
