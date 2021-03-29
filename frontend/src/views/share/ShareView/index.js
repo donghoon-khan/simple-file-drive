@@ -51,7 +51,7 @@ const ShareView = () => {
   const [files, setFiles] = useState([]);
   const [breadCrumb, setBreadCrumb] = useState([]);
   const [selectedFile, setSelectedFile] = useState({});
-  const [path, setPath] = useState(['./test-data']);
+  const [path, setPath] = useState(['/']);
   const [modalOpen, setModalOpen] = useState(false);
   const [fileName, setFileName] = useState('');
   const [dragRange, setDragRange] = useState(false);
@@ -69,15 +69,15 @@ const ShareView = () => {
 
   function findData(path) {
 
-    axios.get(`/files?directory=${path}`).then(res => {
+    // axios.get(`/files?directory=${path}`).then(res => {
 
-      axios.get(`/directories?directory=${path}`).then(res2 => {
+      axios.get(`/directory/${path}`).then(res => {
 
-        setFiles([...res2.data, ...res.data]);
+        setFiles(res.data);
 
       })
 
-    })
+    // })
 
   };
 

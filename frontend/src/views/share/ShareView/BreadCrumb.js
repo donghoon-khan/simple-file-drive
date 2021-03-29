@@ -11,12 +11,12 @@ class BreadCrumb extends Component {
   render() {
     const { path } = this.props;
     
-
+    const newPath = ['/Root', ...path.slice(1)];
     return (
       <>
         <nav className="Breadcrumb">
           {/* <div>root</div> */}
-          {path.map((p) => <div onClick={()=>{this.onClickBread(p)}} key={p}>{p.slice(1)}</div>)}
+          {newPath.map((p) => <div onClick={()=>{this.onClickBread(p)}} key={p}>{p.slice(1)}</div>)}
         </nav>
       </>
 
