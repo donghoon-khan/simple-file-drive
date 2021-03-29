@@ -57,9 +57,11 @@ const ShareView = () => {
   const [dragRange, setDragRange] = useState(false);
   const [mode , setMode] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [contextOpen, setContextOpen] = useState(false);
   
 
   const focusRef = useRef(null);
+  const contextRef = useRef(null);
   
   useEffect(() => {
 
@@ -172,7 +174,7 @@ const ShareView = () => {
 
     if (fileName !== '' && !fileName.includes('.')) {
 
-      axios.post(`/directory?directory=${path.join('')}/${fileName}`).then((res) => {
+      axios.post(`/directory/${path.join('')}/${fileName}`).then((res) => {
 
         setFiles([...files, { name: fileName }]);
         alert('폴더를 생성했습니다.')
@@ -230,8 +232,10 @@ const ShareView = () => {
 
   function onMouseDown(e) {
 
+    
+
     setMode(true);
-    console.log('e', e);
+    console.log('e.which', e.which, e);
     setPosition({x: e.clientX, y: e.clientY})
     focusRef.current.style.display = 'block';
     if(!e.shiftKey && !e.ctrlKey){
@@ -239,6 +243,8 @@ const ShareView = () => {
       clearSelectedFiles();
 
     }
+    console.log('onMouseDown');
+    clearContextOpen();
 
   }
 
@@ -373,6 +379,83 @@ const ShareView = () => {
 
   }
 
+  function onClickContextMenu (e, idx, file) {
+
+    e.preventDefault();
+    e.stopPropagation();
+    console.log(contextRef);
+    console.log(e.clientX, e.clientY);
+    contextRef.current.style.position = 'fixed';
+    contextRef.current.style.top = e.pageY + 'px';
+    contextRef.current.style.left= e.pageX + 'px';
+    contextRef.current.style.zIndex='2';
+    if(!file.active){
+
+      this.onNodeClick(idx, file);
+
+    }
+
+    setContextOpen(true);
+
+  }
+
+  function clearContextOpen() {
+
+    setContextOpen(false);
+    console.log('clearContextOpen', contextRef.current.style);
+    contextRef.current.style.display = 'none';
+
+  }
+
+  function onDownLoadClick() {
+
+    const activeFiles = files.filter(file => file.active);
+
+    
+    console.log(activeFiles, path);
+
+    activeFiles.forEach((file) => {
+
+      axios({ url: `/file${path.join('')}/${file.name}`, method: 'GET', responseType: 'blob' }).then((response) => {
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', file.name); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+        setContextOpen(false);
+        
+      });
+
+    })
+
+  }
+
+  function onDeleteClick() {
+
+    const activeFiles = files.filter(file => file.active);
+
+    console.log(activeFiles, path);
+
+    activeFiles.forEach((file) => {
+
+      axios({ url: `/file${path.join('')}/${file.name}`, method: 'delete' }).then((response) => {
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', file.name); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+        setContextOpen(false);
+
+      });
+
+    })
+
+  }
+
   console.log(files);
   return (
     <>
@@ -397,6 +480,7 @@ const ShareView = () => {
                   onNodeClick={onNodeClick}
                   onFolderClick={onFolderClick}
                   prevFolderClick={prevFolderClick}
+                  onClickContextMenu={onClickContextMenu}
                 />
                 {/* <div className={`dragRange ${dragRange ? '' : 'hidden'}`} ref={focusRef}></div> */}
                 <div className="dragRange" ref={focusRef}></div>
@@ -405,13 +489,25 @@ const ShareView = () => {
           </Box>
 
         </Container>
-        <Modal open={modalOpen}>
-          <div className="modal-Wrapper">
-            <input placeholder="파일명을 입력하세요" onChange={onChanageFileName} value={fileName}></input>
-            <Button variant="contained" color="secondary" onClick={onConfirmModal}>확인</Button>
-            <Button variant="contained" color="primary" onClick={onCancelModal}>취소</Button>
+        {/* <Modal open={modalOpen}> */}
+          <div className="modal-Wrapper" style={{display: modalOpen ? 'flex' : 'none'}}>
+            <div className="modal-Content">
+            <input placeholder="폴더명을 입력해주세요" onChange={onChanageFileName} value={fileName}></input>
+            <div>
+            <Button variant="outlined" color="secondary" onClick={onConfirmModal}>확인</Button>
+            <Button variant="outlined" color="primary" onClick={onCancelModal}>취소</Button>
+            </div>
+            </div>
           </div>
-        </Modal>
+        {/* </Modal> */}
+
+        <div ref={contextRef} id='context_menu' className="custom-context-menu" style={{display: contextOpen ? 'block' : 'none'}}>
+          <ul className="contextMenu">
+            <li><a onClick={onDownLoadClick}>다운로드</a></li>
+            <li><a onClick={onDeleteClick}>삭제</a></li>
+
+          </ul>
+        </div>
 
       </Card>
 

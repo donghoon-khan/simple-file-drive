@@ -19,18 +19,21 @@ class Nodes extends Component {
 
   onContextMenu = (e, idx, file) => {
     e.preventDefault();
-    console.log(this.contextRef);
-    console.log(e.clientX, e.clientY);
-    this.contextRef.current.style.position = 'fixed';
-    this.contextRef.current.style.top = e.pageY + 'px';
-    this.contextRef.current.style.left= e.pageX + 'px';
-    this.contextRef.current.style.zIndex='2';
-    if(!file.active){
-      this.onNodeClick(idx, file);
-    }
-    this.setState({
-      contextOpen :true,
-    });
+    // console.log(this.contextRef);
+    // console.log(e.clientX, e.clientY);
+    // this.contextRef.current.style.position = 'fixed';
+    // this.contextRef.current.style.top = e.pageY + 'px';
+    // this.contextRef.current.style.left= e.pageX + 'px';
+    // this.contextRef.current.style.zIndex='2';
+    // if(!file.active){
+    //   this.onNodeClick(idx, file);
+    // }
+    console.log(e);
+
+    this.props.onClickContextMenu(e, idx, file);
+    // this.setState({
+    //   contextOpen :true,
+    // });
   }
 
 
@@ -42,51 +45,7 @@ class Nodes extends Component {
     this.props.onNodeClick(idx, file);
   }
 
-  onDownLoadClick = () => {
-    const activeFiles = this.props.files.filter(file => file.active);
-    
-    const { path } = this.props;
-    console.log(activeFiles, path);
 
-    activeFiles.forEach((file) => {
-      axios({ url: `/file?file=${path.join('')}/${file.name}`, method: 'GET', responseType: 'blob' }).then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', file.name); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-        this.setState({
-          contextOpen : false,
-        })
-      });
-
-    })
-
-  }
-
-  onDeleteClick = () => {
-    const activeFiles = this.props.files.filter(file => file.active);
-    
-    const { path } = this.props;
-    console.log(activeFiles, path);
-
-    activeFiles.forEach((file) => {
-      axios({ url: `/file?file=${path.join('')}/${file.name}`, method: 'GET', responseType: 'blob' }).then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', file.name); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-        this.setState({
-          contextOpen : false,
-        })
-      });
-
-    })
-
-  }
 
   folderClick = (folderName) => {
     this.props.onFolderClick(folderName);
@@ -141,13 +100,6 @@ class Nodes extends Component {
           })
         }
 
-        <div ref={this.contextRef} id='context_menu' className="custom-context-menu" style={{display: this.state.contextOpen ? 'block' : 'none'}}>
-          <ul className="contextMenu">
-            <li><a onClick={this.onDownLoadClick}>다운로드</a></li>
-            <li><a onClick={this.onDeleteClick}>삭제</a></li>
-
-          </ul>
-        </div>
       </div>
     )
   }
