@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping(value = "/file")
 public class FileController {
@@ -31,6 +35,7 @@ public class FileController {
         this.basePath = basePath;
     }
 
+    @ApiOperation(value = "Download file", notes = "Pass the relative path of the set basepath to URI.")
     @GetMapping("/**")
     public ResponseEntity<Resource> downloadFile(HttpServletRequest request) throws IOException {
         Resource resource = fileService.getFileAsResource(getRelPath(request));
@@ -44,6 +49,11 @@ public class FileController {
                 .body(resource);
     }
 
+    @ApiOperation(value = "Rename/move file", notes = "Pass the relative path of the set basepath to URI.")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "target", value = "Target path, Pass the relative path of the set basepath to URI.", required = true),
+        @ApiImplicitParam(name = "force", value = "Whether to overwrite.", required = false, defaultValue = "false")
+    })
     @PutMapping("/**")
     public ResponseEntity<Void> renameAndMoveFiley(@RequestParam(value = "target", required = true) String target, 
             @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force, 
@@ -54,6 +64,11 @@ public class FileController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "upload file", notes = "Pass the relative path about upload directory of the set basepath to URI.")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "file", value = "Upload file.", required = true),
+        @ApiImplicitParam(name = "force", value = "Whether to overwrite.", required = false, defaultValue = "false")
+    })
     @PostMapping("/**")
     public ResponseEntity<Void> uploadFile(@RequestParam(value = "file", required = true) MultipartFile file, 
             @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force,

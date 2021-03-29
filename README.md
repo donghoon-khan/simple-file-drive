@@ -8,9 +8,8 @@ Application to HTTP File Server.
 ## Feature
 
 - [x] List files/directories
-- [ ] Create directory
-- [ ] Delete directory
-- [ ] Upload file
-- [ ] Download file
-- [ ] Dockerize
-  
+- [x] Create directory
+- [x] Delete directory
+- [x] Move file/directory
+- [x] Upload file
+- [x] Download file
