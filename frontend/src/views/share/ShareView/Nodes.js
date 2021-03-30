@@ -55,6 +55,35 @@ class Nodes extends Component {
   prevFolderClick = () => {
     this.props.prevFolderClick()
   }
+
+  onDragStart = (e) => {
+
+    console.log('dragStart', e);
+    e.dataTransfer.setData('text/plain',null);
+    this.props.onDragStart();
+    
+  }
+
+  onDragEnd = (e) =>{
+
+    console.log('onDragEnd', e);
+    this.props.onDragEnd();
+
+  }
+
+  onDrop = (e) => {
+    console.log('onDrop', e);
+  }
+
+  allowDrop = (e) => {
+    console.log('allowDrop', e);
+  }
+
+  onDrag = (e) => {
+     console.log('e', e);
+  }
+
+
   render() {
     const { files } = this.props;
     console.log(this.state.contextOpen);
@@ -78,6 +107,8 @@ class Nodes extends Component {
               return (
                 <div key={file.name}
                   data-idx={idx}
+                  onDrop={this.onDrop} //onDragOver={this.allowDrop}
+                  droppable={true}
                   className={`Node ${file.active ? 'active' : ''}`}
                   onClick={() => { this.onNodeClick(idx, file) }}
                   onDoubleClick={() => { this.folderClick(file.name) }}>
@@ -90,9 +121,13 @@ class Nodes extends Component {
 
             return (
               <div key={file.name} className={`Node ${file.active ? 'active' : ''}`}
-                onClick={() => { this.onNodeClick(idx, file) }}
+                // onClick={() => { this.onNodeClick(idx, file) }}
+                drag={true}
+                onDrag={this.onDrag}
                 onContextMenu={(e) => { this.onContextMenu(e, idx, file) }}>
-                <img src="/static/images/asset/cat.jpg" alt="이미지" />
+                <img src="/static/images/asset/cat.jpg" alt="이미지" 
+                onDragStart={this.onDragStart} onDragEnd={this.onDragEnd} draggable={true}
+                />
                 <div>{file.name}</div>
               </div>
             );

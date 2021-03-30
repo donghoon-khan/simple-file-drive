@@ -5,7 +5,11 @@ class BreadCrumb extends Component {
 
   onClickBread = (path) =>{
     console.log('onClickBread', this.props.path);
-    this.props.onClickBread(path);
+    if(path === '/Root'){
+      this.props.onClickBread('/');  
+    }else{
+      this.props.onClickBread(path);
+    }
   }
 
   render() {

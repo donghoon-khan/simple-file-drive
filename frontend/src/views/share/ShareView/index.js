@@ -58,6 +58,7 @@ const ShareView = () => {
   const [mode , setMode] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [contextOpen, setContextOpen] = useState(false);
+  const [mouseRangeDrag, setMouseRangeDrag] = useState(true);
   
 
   const focusRef = useRef(null);
@@ -232,19 +233,32 @@ const ShareView = () => {
 
   function onMouseDown(e) {
 
-    
+    console.log(document.elementFromPoint(e.clientX, e.clientY));
+    const pointElement = document.elementFromPoint(e.clientX, e.clientY);
+    console.log('pointElement.className.includes()', pointElement.className.includes('App'));
 
-    setMode(true);
-    console.log('e.which', e.which, e);
-    setPosition({x: e.clientX, y: e.clientY})
-    focusRef.current.style.display = 'block';
-    if(!e.shiftKey && !e.ctrlKey){
+    if(pointElement.className.includes('App')){
 
-      clearSelectedFiles();
+      console.log('mouseDown button',  );
+      e.stopPropagation();
+
+      if(e.button===0) {
+  
+        setMode(true);
+        console.log('e.which', e.which, e);
+        setPosition({x: e.clientX, y: e.clientY})
+        focusRef.current.style.display = 'block';
+        if(!e.shiftKey && !e.ctrlKey){
+          
+          clearSelectedFiles();
+          
+        }
+        console.log('onMouseDown');
+        clearContextOpen();
+        
+      }
 
     }
-    console.log('onMouseDown');
-    clearContextOpen();
 
   }
 
@@ -266,6 +280,7 @@ const ShareView = () => {
   function onMouseMove(e){
     
     e.preventDefault();
+    e.stopPropagation();
 
     if (mode) {
 
@@ -333,8 +348,9 @@ const ShareView = () => {
     
   }
   
-  function onMouseUp() {
+  function onMouseUp(e) {
 
+    e.stopPropagation();
     setMode(false);
     setDragRange(false);
     
@@ -416,19 +432,23 @@ const ShareView = () => {
 
     activeFiles.forEach((file) => {
 
-      axios({ url: `/file${path.join('')}/${file.name}`, method: 'GET', responseType: 'blob' }).then((response) => {
+      if (file.type !== 'directory') {
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', file.name); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-        setContextOpen(false);
-        
-      });
+        axios({ url: `/file${path.join('')}/${file.name}`, method: 'GET', responseType: 'blob' }).then((response) => {
 
-    })
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', file.name); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+          setContextOpen(false);
+
+        });
+
+      }
+
+    });
 
   }
 
@@ -456,6 +476,20 @@ const ShareView = () => {
 
   }
 
+  function onDragStart(){
+
+    setMouseRangeDrag(false);
+    console.log('onDragStart')
+    console.log('asd');
+
+  }
+
+  function onDragEnd(){
+
+    setMouseRangeDrag(true);
+
+  }
+
   console.log(files);
   return (
     <>
@@ -466,7 +500,11 @@ const ShareView = () => {
               <header>
                 <h1>고양이 사진첩</h1>
               </header>
-              <main className="App" onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
+              <main className="App"
+                onMouseDown={mouseRangeDrag ? onMouseDown : null} 
+                onDrag={onMouseMove} 
+                onMouseUp={mouseRangeDrag ? onMouseUp: null}
+              >
                 <nav>
                   <Button variant="outlined" color="secondary" onClick={onClickNewFile}>new folder</Button>
                 </nav>
@@ -477,6 +515,8 @@ const ShareView = () => {
                 <Nodes
                   files={files}
                   path={path}
+                  onDragStart={onDragStart}
+                  onDragEnd={onDragEnd}
                   onNodeClick={onNodeClick}
                   onFolderClick={onFolderClick}
                   prevFolderClick={prevFolderClick}
