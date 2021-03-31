@@ -204,3 +204,25 @@ nav {
     opacity: 0.7;
     z-index: 50;
 }
+
+.dragItem {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    z-index: 6;
+    position: fixed;
+    
+}
+
+.dragContainer{
+    background-color: #e3f2fd;
+    width: 200px;
+    min-height: 50px;
+    border-radius: 10px;
+    border: 2px solid #b1bfca;
+}
+
+.dragElement{
+    background-color: black;
+    color: white;
+}

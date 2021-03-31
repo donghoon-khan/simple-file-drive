@@ -61,7 +61,7 @@ class Nodes extends Component {
     console.log('dragStart', e);
     e.dataTransfer.setData('text/plain',null);
     this.props.onDragStart();
-    
+
   }
 
   onDragEnd = (e) =>{
@@ -122,8 +122,8 @@ class Nodes extends Component {
             return (
               <div key={file.name} className={`Node ${file.active ? 'active' : ''}`}
                 // onClick={() => { this.onNodeClick(idx, file) }}
-                drag={true}
-                onDrag={this.onDrag}
+                // drag={true}
+                // onDrag={this.onDrag}
                 onContextMenu={(e) => { this.onContextMenu(e, idx, file) }}>
                 <img src="/static/images/asset/cat.jpg" alt="이미지" 
                 onDragStart={this.onDragStart} onDragEnd={this.onDragEnd} draggable={true}

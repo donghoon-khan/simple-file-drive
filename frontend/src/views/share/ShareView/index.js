@@ -56,6 +56,7 @@ const ShareView = () => {
   const [fileName, setFileName] = useState('');
   const [dragRange, setDragRange] = useState(false);
   const [mode , setMode] = useState(false);
+  const [dragMode , setDragMode] = useState({mode: false, dragElements : []});
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [contextOpen, setContextOpen] = useState(false);
   const [mouseRangeDrag, setMouseRangeDrag] = useState(true);
@@ -63,6 +64,7 @@ const ShareView = () => {
 
   const focusRef = useRef(null);
   const contextRef = useRef(null);
+  const dragRef = useRef(null);
   
   useEffect(() => {
 
@@ -258,6 +260,15 @@ const ShareView = () => {
         
       }
 
+    }else{
+
+      // const element = document.elementFromPoint(e.clientX, e.clientY).tagName==='IMG' ?  document.elementFromPoint(e.clientX, e.clientY).parentNode: document.elementFromPoint(e.clientX, e.clientY);
+      const activeFiles = files.filter((file) => file.active);
+      console.log('mouseDown activeFiles');
+      setDragMode({ mode: true, dragElements: activeFiles });
+      console.log('여기');
+     
+
     }
 
   }
@@ -281,11 +292,17 @@ const ShareView = () => {
     
     e.preventDefault();
     e.stopPropagation();
-
+    console.log('dragMode.mode', dragMode.mode);
+    
     if (mode) {
+    
 
       let x = e.clientX;
       let y = e.clientY;
+      console.log('document.elementFromPoint(x,y)', document.elementFromPoint(x,y).className);
+
+      // if(document.elementFromPoint(x,y))
+
       const width = Math.max(x - position.x, position.x - x);
       const left = Math.min(position.x, x);
       focusRef.current.style.left = `${left}px`;
@@ -324,6 +341,25 @@ const ShareView = () => {
 
       })
 
+    } else if (dragMode.mode) {
+
+      console.log('dragMode.dragElements', dragMode.dragElements);
+      let x = e.clientX;
+      let y = e.clientY;
+      console.log('dragMode.dragElements', dragMode.dragElements);
+      // dragMode.dragElements.forEach((element) => {
+
+      dragRef.current.style.position = 'fixed';
+      dragRef.current.style.left = `${x+5}px`;
+      dragRef.current.style.top = `${y+5}px`;
+
+      // })
+
+      // dragMode.element.current.style.height = `0px`;
+      // dragMode.element.current.style.width = `0px`;
+
+
+
     }
 
   }
@@ -353,12 +389,22 @@ const ShareView = () => {
     e.stopPropagation();
     setMode(false);
     setDragRange(false);
+    console.log('mouseUp 호출' );
+    
+    setDragMode({mode: false, dragElements : []});
     
     focusRef.current.style.display = 'none';
     focusRef.current.style.height = `0px`;
     focusRef.current.style.width = `0px`;
     focusRef.current.style.top = `0px`;
     focusRef.current.style.left = `0px`;
+    // if(dragMode.mode) {
+      
+      dragRef.current.style.position = 'fixed';
+      dragRef.current.style.left = `${0}px`;
+      dragRef.current.style.top = `${0}px`;
+      
+    // }
     setActiveFiles();
     
   }
@@ -502,7 +548,7 @@ const ShareView = () => {
               </header>
               <main className="App"
                 onMouseDown={mouseRangeDrag ? onMouseDown : null} 
-                onDrag={onMouseMove} 
+                onMouseMove={onMouseMove} 
                 onMouseUp={mouseRangeDrag ? onMouseUp: null}
               >
                 <nav>
@@ -548,6 +594,21 @@ const ShareView = () => {
 
           </ul>
         </div>
+
+        <div ref={dragRef} className="dragContainer">
+          {
+            dragMode.dragElements.map((file) => {
+
+              return <div>
+                {file.name}
+              </div>
+
+            })
+          }
+          {dragMode.dragElements.length > 1 ? <div>{dragMode.dragElements.length} </div> : null}
+
+        </div>
+        
 
       </Card>
 
