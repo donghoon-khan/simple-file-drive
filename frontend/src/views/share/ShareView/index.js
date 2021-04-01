@@ -6,6 +6,8 @@ import { Box, Container, Card, Modal, Button } from '@material-ui/core';
 import './main.css';
 import BreadCrumb from './BreadCrumb';
 import Nodes from './Nodes';
+import { element } from 'prop-types';
+import { CreateNewFolder } from '@material-ui/icons';
 
 let cntrlIsPressed = false;
 let shiftIsPressed = false;
@@ -74,15 +76,12 @@ const ShareView = () => {
 
   function findData(path) {
 
-    // axios.get(`/files?directory=${path}`).then(res => {
 
       axios.get(`/directory/${path}`).then(res => {
 
         setFiles(res.data);
 
       })
-
-    // })
 
   };
 
@@ -131,8 +130,6 @@ const ShareView = () => {
 
       }
 
-      // updateFile[idx].active = updateFile[idx].active ? false : true;
-
       setFiles(
         updateFile
       );
@@ -147,7 +144,6 @@ const ShareView = () => {
       );
 
     }
-    // )
 
   }
 
@@ -179,7 +175,7 @@ const ShareView = () => {
 
       axios.post(`/directory/${path.join('')}/${fileName}`).then((res) => {
 
-        setFiles([...files, { name: fileName }]);
+        setFiles([...files, { name: fileName, type: 'directory' }]);
         alert('폴더를 생성했습니다.')
 
       })
@@ -237,41 +233,55 @@ const ShareView = () => {
 
     console.log(document.elementFromPoint(e.clientX, e.clientY));
     const pointElement = document.elementFromPoint(e.clientX, e.clientY);
-    console.log('pointElement.className.includes()', pointElement.className.includes('App'));
+    setContextOpen(false);
+    
+    console.log('pointElement.className', pointElement.className);
+    if(pointElement.className && pointElement.className.includes('App')||pointElement.className.includes('Nodes') || e.ctrlKey || e.shiftKey){ //1. 메인 클릭했을때 드래그 범위 나오도록 해야함
 
-    if(pointElement.className.includes('App')){
-
-      console.log('mouseDown button',  );
+      //2.컨트롤 클릭했을 때도 드래그 범위나오도록
       e.stopPropagation();
 
       if(e.button===0) {
   
         setMode(true);
-        console.log('e.which', e.which, e);
         setPosition({x: e.clientX, y: e.clientY})
         focusRef.current.style.display = 'block';
-        if(!e.shiftKey && !e.ctrlKey){
-          
+        if (!e.shiftKey && !e.ctrlKey) {
+
           clearSelectedFiles();
-          
+
         }
-        console.log('onMouseDown');
         clearContextOpen();
         
       }
 
-    }else{
+    } else if(pointElement.className.includes('Node ') || pointElement.tagName ==='IMG'){
 
-      // const element = document.elementFromPoint(e.clientX, e.clientY).tagName==='IMG' ?  document.elementFromPoint(e.clientX, e.clientY).parentNode: document.elementFromPoint(e.clientX, e.clientY);
+      
+      
+      //여기서 한번 files 해줘야함 컨트롤 클릭은 위로 가니까 밑에 
+      //그냥 클릭할때 원래 active 취소하고
+      //얘가 액티브가 아니라면 액티브를 해주고 다른건 다 취소해야댄다
+      const targetElement = document.elementFromPoint(e.clientX, e.clientY).tagName==='IMG' ? document.elementFromPoint(e.clientX, e.clientY).parentNode : document.elementFromPoint(e.clientX, e.clientY);
+      console.log('targetElement', targetElement.className.includes('Node active'));
+      if(!targetElement.className.includes('Node active')){
+
+        clearSelectedFiles();
+        targetElement.className = 'Node active';
+        setActiveFiles(e);
+
+      }
       const activeFiles = files.filter((file) => file.active);
-      console.log('mouseDown activeFiles');
+
       setDragMode({ mode: true, dragElements: activeFiles });
-      console.log('여기');
-     
 
     }
 
+    console.dir(document.elementFromPoint(e.clientX, e.clientY));
+
   }
+
+  
 
   function boxIntersects (boxA, boxB) {
 
@@ -292,16 +302,12 @@ const ShareView = () => {
     
     e.preventDefault();
     e.stopPropagation();
-    console.log('dragMode.mode', dragMode.mode);
     
     if (mode) {
     
 
       let x = e.clientX;
       let y = e.clientY;
-      console.log('document.elementFromPoint(x,y)', document.elementFromPoint(x,y).className);
-
-      // if(document.elementFromPoint(x,y))
 
       const width = Math.max(x - position.x, position.x - x);
       const left = Math.min(position.x, x);
@@ -316,10 +322,9 @@ const ShareView = () => {
       focusRef.current.style.zIndex='50';
 
       const nodes = document.getElementsByClassName('Node');
-      
+      //신나게 Node를 돌면서 드래그 박스안에 있는지 확인한다.
       Array.prototype.forEach.call(nodes, (node, idx) => {
 
-        console.log(node.offsetTop, node.offsetLeft, node.clientWidth, node.clientHeight);
         if (boxIntersects(
           {
             top, left, width, height
@@ -335,7 +340,15 @@ const ShareView = () => {
 
         } else {
 
-          node.className = 'Node';
+          if ((e.ctrlKey || e.shiftKey) && node.className.includes('Node active')) {
+
+            node.className = 'Node active';
+
+          } else {
+
+            node.className = 'Node';
+
+          }
 
         }
 
@@ -343,22 +356,12 @@ const ShareView = () => {
 
     } else if (dragMode.mode) {
 
-      console.log('dragMode.dragElements', dragMode.dragElements);
       let x = e.clientX;
       let y = e.clientY;
-      console.log('dragMode.dragElements', dragMode.dragElements);
-      // dragMode.dragElements.forEach((element) => {
 
       dragRef.current.style.position = 'fixed';
       dragRef.current.style.left = `${x+5}px`;
       dragRef.current.style.top = `${y+5}px`;
-
-      // })
-
-      // dragMode.element.current.style.height = `0px`;
-      // dragMode.element.current.style.width = `0px`;
-
-
 
     }
 
@@ -389,8 +392,6 @@ const ShareView = () => {
     e.stopPropagation();
     setMode(false);
     setDragRange(false);
-    console.log('mouseUp 호출' );
-    
     setDragMode({mode: false, dragElements : []});
     
     focusRef.current.style.display = 'none';
@@ -399,27 +400,59 @@ const ShareView = () => {
     focusRef.current.style.top = `0px`;
     focusRef.current.style.left = `0px`;
     // if(dragMode.mode) {
-      
-      dragRef.current.style.position = 'fixed';
-      dragRef.current.style.left = `${0}px`;
-      dragRef.current.style.top = `${0}px`;
-      
+
+    dragRef.current.style.position = 'fixed';
+    dragRef.current.style.left = `${0}px`;
+    dragRef.current.style.top = `${0}px`;
+
     // }
-    setActiveFiles();
+    
+    const currentNode = findCurrentNodeElement(e);
+    console.log('mouseUpCurrentNode ', currentNode);
+
+    if(currentNode.childNodes[0].currentSrc && currentNode.childNodes[0].currentSrc.includes('directory')){
+
+      console.log('이동 구현필요');
+
+    }
+    console.dir();
+    //currentNode가directory가 아니라면 그냥끝 directory라면 폴더에 넣는다 
+
+    setActiveFiles(e);
     
   }
 
-  function setActiveFiles () {
+  function findCurrentNodeElement(e) {
+
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    if(target.tagName==='IMG'){
+
+      return target.parentNode;
+
+    }else{
+
+      return target;
+
+    }
+
+  }
+
+  function setActiveFiles (e) {
 
     const activeNodes = document.getElementsByClassName('Node active');
 
     console.log(setActiveFiles)
+
     const newFiles = files;
-    newFiles.forEach(file => {
+    if(!e.ctrlKey  && !e.shiftKey){
 
-      file.active = false;
+      newFiles.forEach(file => {
+  
+        file.active = false;
+  
+      })
 
-    })
+    }
     
     Array.prototype.forEach.call(activeNodes, activeNode => {
 
@@ -522,21 +555,21 @@ const ShareView = () => {
 
   }
 
-  function onDragStart(){
+  function mainContextMenu (e) {
 
-    setMouseRangeDrag(false);
-    console.log('onDragStart')
-    console.log('asd');
-
-  }
-
-  function onDragEnd(){
-
-    setMouseRangeDrag(true);
+    e.preventDefault();
+    console.log('mainContextMenu', e)
 
   }
 
-  console.log(files);
+  function onRenameClick () {
+
+    // 동적으로 렌더링 바꾸기 어케하지
+    // 모달내용, context 내용
+    
+  }
+
+
   return (
     <>
       <Card>
@@ -550,9 +583,10 @@ const ShareView = () => {
                 onMouseDown={mouseRangeDrag ? onMouseDown : null} 
                 onMouseMove={onMouseMove} 
                 onMouseUp={mouseRangeDrag ? onMouseUp: null}
+                onContextMenu={mainContextMenu}
               >
                 <nav>
-                  <Button variant="outlined" color="secondary" onClick={onClickNewFile}>new folder</Button>
+                  <Button variant="outlined" color="secondary" onClick={onClickNewFile}><CreateNewFolder/></Button>
                 </nav>
                 <BreadCrumb
                   onClickBread={onClickBread}
@@ -561,8 +595,7 @@ const ShareView = () => {
                 <Nodes
                   files={files}
                   path={path}
-                  onDragStart={onDragStart}
-                  onDragEnd={onDragEnd}
+
                   onNodeClick={onNodeClick}
                   onFolderClick={onFolderClick}
                   prevFolderClick={prevFolderClick}
@@ -575,9 +608,9 @@ const ShareView = () => {
           </Box>
 
         </Container>
-        {/* <Modal open={modalOpen}> */}
           <div className="modal-Wrapper" style={{display: modalOpen ? 'flex' : 'none'}}>
             <div className="modal-Content">
+              <h1>새 폴더</h1>
             <input placeholder="폴더명을 입력해주세요" onChange={onChanageFileName} value={fileName}></input>
             <div>
             <Button variant="outlined" color="secondary" onClick={onConfirmModal}>확인</Button>
@@ -585,13 +618,12 @@ const ShareView = () => {
             </div>
             </div>
           </div>
-        {/* </Modal> */}
 
         <div ref={contextRef} id='context_menu' className="custom-context-menu" style={{display: contextOpen ? 'block' : 'none'}}>
           <ul className="contextMenu">
             <li><a onClick={onDownLoadClick}>다운로드</a></li>
+            <li><a onClick={onRenameClick}>이름변경</a></li>
             <li><a onClick={onDeleteClick}>삭제</a></li>
-
           </ul>
         </div>
 
@@ -605,7 +637,7 @@ const ShareView = () => {
 
             })
           }
-          {dragMode.dragElements.length > 1 ? <div>{dragMode.dragElements.length} </div> : null}
+          {dragMode.dragElements.length > 0 ? <div>{dragMode.dragElements.length} </div> : null}
 
         </div>
         

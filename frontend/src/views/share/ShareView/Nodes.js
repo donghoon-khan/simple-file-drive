@@ -18,22 +18,13 @@ class Nodes extends Component {
   }
 
   onContextMenu = (e, idx, file) => {
+
     e.preventDefault();
-    // console.log(this.contextRef);
-    // console.log(e.clientX, e.clientY);
-    // this.contextRef.current.style.position = 'fixed';
-    // this.contextRef.current.style.top = e.pageY + 'px';
-    // this.contextRef.current.style.left= e.pageX + 'px';
-    // this.contextRef.current.style.zIndex='2';
-    // if(!file.active){
-    //   this.onNodeClick(idx, file);
-    // }
+
     console.log(e);
 
     this.props.onClickContextMenu(e, idx, file);
-    // this.setState({
-    //   contextOpen :true,
-    // });
+
   }
 
 
@@ -56,20 +47,6 @@ class Nodes extends Component {
     this.props.prevFolderClick()
   }
 
-  onDragStart = (e) => {
-
-    console.log('dragStart', e);
-    e.dataTransfer.setData('text/plain',null);
-    this.props.onDragStart();
-
-  }
-
-  onDragEnd = (e) =>{
-
-    console.log('onDragEnd', e);
-    this.props.onDragEnd();
-
-  }
 
   onDrop = (e) => {
     console.log('onDrop', e);
@@ -102,13 +79,13 @@ class Nodes extends Component {
         {
           files.map((file, idx) => {
 
-            if (!file.name.includes('.')) {
+            if (file.type === 'directory') {
 
               return (
                 <div key={file.name}
                   data-idx={idx}
                   onDrop={this.onDrop} //onDragOver={this.allowDrop}
-                  droppable={true}
+                  // droppable={true}
                   className={`Node ${file.active ? 'active' : ''}`}
                   onClick={() => { this.onNodeClick(idx, file) }}
                   onDoubleClick={() => { this.folderClick(file.name) }}>
@@ -121,12 +98,13 @@ class Nodes extends Component {
 
             return (
               <div key={file.name} className={`Node ${file.active ? 'active' : ''}`}
-                // onClick={() => { this.onNodeClick(idx, file) }}
+                onClick={() => { this.onNodeClick(idx, file) }}
                 // drag={true}
                 // onDrag={this.onDrag}
                 onContextMenu={(e) => { this.onContextMenu(e, idx, file) }}>
                 <img src="/static/images/asset/cat.jpg" alt="이미지" 
-                onDragStart={this.onDragStart} onDragEnd={this.onDragEnd} draggable={true}
+
+                draggable={true}
                 />
                 <div>{file.name}</div>
               </div>
