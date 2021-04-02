@@ -31,9 +31,6 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('keyup', (e) => {
 
-  // cntrlIsPressed = false;
-  // console.log('keyup', e);
-  
   if (e.key === 'Control') {
 
     cntrlIsPressed = false
@@ -691,16 +688,22 @@ const ShareView = () => {
         files={files}
       />
         <div ref={dragRef} className="dragContainer">
+          {/* <div className="item" style={{'--n': 1, }}>file.jpg</div>
+          <div className="item" style={{'--n': 2, }}>file.jpg</div>
+          <div className="item" style={{'--n': 3, }}>file.jpg</div> */}
+          {/* <div className="count">3</div> */}
           {
-            dragMode.dragElements.map((file) => {
+            dragMode.dragElements.map((file, idx) => {
 
-              return <div>
+              return <div
+              
+              className="item" style={{'--n': idx }}>
                 {file.name}
               </div>
 
             })
           }
-          {dragMode.dragElements.length > 0 ? <div>{dragMode.dragElements.length} </div> : null}
+          {dragMode.dragElements.length > 0 ? <div className="count">{dragMode.dragElements.length} </div> : null}
 
         </div>
         

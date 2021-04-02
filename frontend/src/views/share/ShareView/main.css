@@ -219,11 +219,45 @@ nav {
 }
 
 .dragContainer{
-    background-color: #e3f2fd;
-    width: 200px;
-    min-height: 50px;
-    border-radius: 10px;
-    border: 2px solid #b1bfca;
+    /* background-color: #e3f2fd; */
+    /* width: 200px; */
+    /* min-height: 50px; */
+    /* border-radius: 10px; */
+    /* border: 2px solid #b1bfca; */
+    position: relative;
+}
+
+.dragContainer > .item{
+  position: absolute;
+  left: calc( var(--n) * 3px  );
+  top: calc( var(--n) * 3px );
+  background-color: #e3f2fd;
+  z-index: calc( 10 - var(--n) );
+  /* border: 2px solid black; */
+  border-radius: 2px;
+  box-shadow: 0 3px 5px 2px rgba(0, 0, 0, 0.3);
+  width: 150px;
+  height: 30px;
+}
+
+
+
+
+.dragContainer > .count{
+  background-color:red;
+  position: relative;
+  top: -5px;
+  left: 140px;
+  
+  width: 25px;
+  height: 25px;
+  z-index: 15;
+  
+  text-align: center;
+  
+  border-radius: 100%;
+  
+
 }
 
 .dragElement{
