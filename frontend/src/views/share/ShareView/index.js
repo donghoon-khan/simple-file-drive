@@ -1,13 +1,14 @@
 /* eslint padded-blocks: ["error", "always"] */
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { Box, Container, Card, Modal, Button } from '@material-ui/core';
+import { Box, Container, Card, Button } from '@material-ui/core';
 
 import './main.css';
 import BreadCrumb from './BreadCrumb';
 import Nodes from './Nodes';
-import { element } from 'prop-types';
 import { CreateNewFolder } from '@material-ui/icons';
+import CustomModal from 'src/components/CustomModal';
+import ContextMenu from 'src/components/ContextMenu';
 
 let cntrlIsPressed = false;
 let shiftIsPressed = false;
@@ -51,17 +52,17 @@ let clickStartIndex = -1;
 const ShareView = () => {
 
   const [files, setFiles] = useState([]);
-  const [breadCrumb, setBreadCrumb] = useState([]);
-  const [selectedFile, setSelectedFile] = useState({});
   const [path, setPath] = useState(['/']);
   const [modalOpen, setModalOpen] = useState(false);
   const [fileName, setFileName] = useState('');
-  const [dragRange, setDragRange] = useState(false);
   const [mode , setMode] = useState(false);
   const [dragMode , setDragMode] = useState({mode: false, dragElements : []});
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [contextOpen, setContextOpen] = useState(false);
   const [mouseRangeDrag, setMouseRangeDrag] = useState(true);
+  const [modalType, setModalType] = useState('NEW_DIRECTORY');
+
+  const [contextType, setContextType] = useState('file');
   
 
   const focusRef = useRef(null);
@@ -101,7 +102,7 @@ const ShareView = () => {
         clickStartIndex = idx;
         updateFile[idx].active = updateFile[idx].active ? false : true;
 
-      }else if (clickStartIndex < idx) {
+      } else if (clickStartIndex < idx) {
 
         updateFile.forEach((file, index) => {
 
@@ -126,7 +127,6 @@ const ShareView = () => {
           }
 
         })
-
 
       }
 
@@ -169,25 +169,52 @@ const ShareView = () => {
 
   }
 
-  function onConfirmModal() {
+  function onConfirmModal(data) {
 
-    if (fileName !== '' && !fileName.includes('.')) {
+    if(modalType==='NEW_DIRECTORY'){
 
-      axios.post(`/directory/${path.join('')}/${fileName}`).then((res) => {
+      if (fileName !== '' && !fileName.includes('.')) {
+  
+        axios.post(`/directory/${path.join('')}/${fileName}`).then((res) => {
+  
+          setFiles([...files, { name: fileName, type: 'directory' }]);
+          alert('폴더를 생성했습니다.')
+  
+        })
+          .catch((e) => {
+  
+            alert('생성 실패했습니다.')
+  
+          });
+  
+      }
 
-        setFiles([...files, { name: fileName, type: 'directory' }]);
-        alert('폴더를 생성했습니다.')
+      setFileName('');
+
+    } else if (modalType === 'NEW_FILE') {
+
+      //파일업로드 구현
+      console.log('modalType===NEW_FILE', data);
+      var frm = new FormData();
+      frm.append('file', data);
+      axios.post(`/file?force=false`, frm, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((e) => {
+
+        alert('파일을 추가했습니다.');
 
       })
         .catch((e) => {
 
-          alert('생성 실패했습니다.')
+          alert('파일 추가에 실패 했습니다.');
 
-        });
+        })
 
     }
+
     setModalOpen(false);
-    setFileName('');
 
   }
 
@@ -256,8 +283,6 @@ const ShareView = () => {
       }
 
     } else if(pointElement.className.includes('Node ') || pointElement.tagName ==='IMG'){
-
-      
       
       //여기서 한번 files 해줘야함 컨트롤 클릭은 위로 가니까 밑에 
       //그냥 클릭할때 원래 active 취소하고
@@ -391,7 +416,6 @@ const ShareView = () => {
 
     e.stopPropagation();
     setMode(false);
-    setDragRange(false);
     setDragMode({mode: false, dragElements : []});
     
     focusRef.current.style.display = 'none';
@@ -399,14 +423,11 @@ const ShareView = () => {
     focusRef.current.style.width = `0px`;
     focusRef.current.style.top = `0px`;
     focusRef.current.style.left = `0px`;
-    // if(dragMode.mode) {
 
     dragRef.current.style.position = 'fixed';
     dragRef.current.style.left = `${0}px`;
     dragRef.current.style.top = `${0}px`;
 
-    // }
-    
     const currentNode = findCurrentNodeElement(e);
     console.log('mouseUpCurrentNode ', currentNode);
 
@@ -415,7 +436,6 @@ const ShareView = () => {
       console.log('이동 구현필요');
 
     }
-    console.dir();
     //currentNode가directory가 아니라면 그냥끝 directory라면 폴더에 넣는다 
 
     setActiveFiles(e);
@@ -440,8 +460,6 @@ const ShareView = () => {
   function setActiveFiles (e) {
 
     const activeNodes = document.getElementsByClassName('Node active');
-
-    console.log(setActiveFiles)
 
     const newFiles = files;
     if(!e.ctrlKey  && !e.shiftKey){
@@ -476,6 +494,15 @@ const ShareView = () => {
 
   function onClickContextMenu (e, idx, file) {
 
+    const activeFiles = files.filter((file) => file.active);
+    
+    if(activeFiles.length === 1){
+
+      setFileName(activeFiles[0].name);
+
+    }
+    
+
     e.preventDefault();
     e.stopPropagation();
     console.log(contextRef);
@@ -484,13 +511,19 @@ const ShareView = () => {
     contextRef.current.style.top = e.pageY + 'px';
     contextRef.current.style.left= e.pageX + 'px';
     contextRef.current.style.zIndex='2';
+    //여러개일때 분기 한번 필요
+    //한개일때 ? 
+    
     if(!file.active){
 
       this.onNodeClick(idx, file);
 
     }
 
+    //file Modal 에 context에 전달 필요
+
     setContextOpen(true);
+    setContextType('file');
 
   }
 
@@ -503,6 +536,8 @@ const ShareView = () => {
   }
 
   function onDownLoadClick() {
+
+    
 
     const activeFiles = files.filter(file => file.active);
 
@@ -552,6 +587,7 @@ const ShareView = () => {
       });
 
     })
+    
 
   }
 
@@ -559,16 +595,41 @@ const ShareView = () => {
 
     e.preventDefault();
     console.log('mainContextMenu', e)
+    setContextType('background');
+    contextRef.current.style.position = 'fixed';
+    contextRef.current.style.top = e.pageY + 'px';
+    contextRef.current.style.left= e.pageX + 'px';
+    contextRef.current.style.zIndex='2';
+    setContextOpen(true);
 
   }
 
   function onRenameClick () {
 
     // 동적으로 렌더링 바꾸기 어케하지
+    console.log('onRenameClick');
+    setModalType('RENAME_FILE');
+    setModalOpen(true);
+    setContextOpen(false);
     // 모달내용, context 내용
     
   }
 
+  function onNewFolderClick(){
+
+    setModalType('NEW_DIRECTORY');
+    onClickNewFile();
+    setContextOpen(false);
+
+  }
+
+  function onNewFileClick(){
+
+    setModalType('NEW_FILE');
+    setModalOpen(true);
+    setContextOpen(false);
+
+  }
 
   return (
     <>
@@ -590,7 +651,6 @@ const ShareView = () => {
                 </nav>
                 <BreadCrumb
                   onClickBread={onClickBread}
-                  breadCrumb={breadCrumb}
                   path={path} />
                 <Nodes
                   files={files}
@@ -608,25 +668,28 @@ const ShareView = () => {
           </Box>
 
         </Container>
-          <div className="modal-Wrapper" style={{display: modalOpen ? 'flex' : 'none'}}>
-            <div className="modal-Content">
-              <h1>새 폴더</h1>
-            <input placeholder="폴더명을 입력해주세요" onChange={onChanageFileName} value={fileName}></input>
-            <div>
-            <Button variant="outlined" color="secondary" onClick={onConfirmModal}>확인</Button>
-            <Button variant="outlined" color="primary" onClick={onCancelModal}>취소</Button>
-            </div>
-            </div>
-          </div>
-
-        <div ref={contextRef} id='context_menu' className="custom-context-menu" style={{display: contextOpen ? 'block' : 'none'}}>
-          <ul className="contextMenu">
-            <li><a onClick={onDownLoadClick}>다운로드</a></li>
-            <li><a onClick={onRenameClick}>이름변경</a></li>
-            <li><a onClick={onDeleteClick}>삭제</a></li>
-          </ul>
-        </div>
-
+        <CustomModal
+          modalOpen={modalOpen}
+          onChanageFileName={onChanageFileName}
+          onConfirmModal={onConfirmModal}
+          onCancelModal={onCancelModal}
+          fileName={fileName}
+          type={modalType}
+          files={files}
+        />
+         
+        
+      <ContextMenu
+        onDeleteClick={onDeleteClick}
+        onRenameClick={onRenameClick}
+        onDownLoadClick={onDownLoadClick}
+        onNewFolderClick={onNewFolderClick}
+        onNewFileClick={onNewFileClick}
+        contextOpen={contextOpen}
+        contextRef={contextRef}
+        contextType={contextType}
+        files={files}
+      />
         <div ref={dragRef} className="dragContainer">
           {
             dragMode.dragElements.map((file) => {

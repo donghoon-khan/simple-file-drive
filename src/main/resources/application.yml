@@ -11,4 +11,4 @@ spring:
       max-file-size: 1GB
       max-request-size: 1GB
 
-basePath: /Users/kangdonghoon/github/http-file-server/test-data
+basePath: /git/http-file-server/test-data

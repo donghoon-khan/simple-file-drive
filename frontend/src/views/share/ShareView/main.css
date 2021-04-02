@@ -114,9 +114,7 @@ main {
 }
 
 .modal-Content input{
-    padding : 10px;
     margin: 15px;
-    
 }
 
 .modal-Content div button {
@@ -168,11 +166,17 @@ ul{
 }
 
 #context_menu li{
-    padding: 7px;
+    /* padding: 7px; */
     font-size: 10px;
     transition: 0.3s linear;
-    border-bottom: 1px solid #b1bfca;
+    border-bottom: 1px solidfv #b1bfca;
     
+}
+
+#context_menu li a {
+    width: 100%;
+    display: block;
+    padding: 7px;
 }
 
 #context_menu li:hover{
