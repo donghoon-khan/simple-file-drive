@@ -6,7 +6,7 @@ export default function CustomModal (props) {
   const newFileInput = useRef(null);
   const [selectedFile, setSelectedFile] = useState('');
 
-  
+  console.log('customModal selectedFile', selectedFile)
   
   function renderChildren(){
     console.log('prop.type 출력 : ', props.type);
@@ -24,7 +24,7 @@ export default function CustomModal (props) {
           id="newFile"
           type="file"
           onChange={newFileChnage}
-          value={selectedFile}
+          // value={selectedFile}
         >
         </input>
         <div>

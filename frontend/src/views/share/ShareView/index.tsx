@@ -66,7 +66,6 @@ const ShareView = () => {
   const [dragMode , setDragMode] = useState<DragMode>({mode: false, dragElements : []});
   const [position, setPosition] = useState<{x: number, y: number}>({ x: 0, y: 0 });
   const [contextOpen, setContextOpen] = useState<boolean>(false);
-  const [mouseRangeDrag, setMouseRangeDrag] = useState<boolean>(true);
   const [modalType, setModalType] = useState<string>('NEW_DIRECTORY');
 
   const [contextType, setContextType] = useState('file');
@@ -93,7 +92,7 @@ const ShareView = () => {
 
   };
 
-  function onNodeClick(idx: number, file: file) : void{
+  function onNodeClick(idx: number, file: file): void {
 
     const updateFile = [...files];
     if (cntrlIsPressed) {
@@ -176,7 +175,7 @@ const ShareView = () => {
 
   }
 
-  function onConfirmModal(data: string) {
+  function onConfirmModal(data: any) {
 
     if(modalType==='NEW_DIRECTORY'){
 
@@ -304,7 +303,6 @@ const ShareView = () => {
         if(pointElement){
 
           const targetElement: any = pointElement.tagName==='IMG' ? pointElement.parentNode : document.elementFromPoint(e.clientX, e.clientY);
-          // console.log('targetElement', targetElement.className.includes('Node active'));
 
           if(targetElement){
 
@@ -327,8 +325,6 @@ const ShareView = () => {
       }
 
     }
-
-    console.dir(document.elementFromPoint(e.clientX, e.clientY));
 
   }
 
@@ -371,7 +367,7 @@ const ShareView = () => {
         focusRef.current.style.width = `${width}px`;
         focusRef.current.style.height = `${height}px`;
         focusRef.current.style.top = `${top}px`;
-        focusRef.current.style.zIndex='50';
+        focusRef.current.style.zIndex = '50';
 
       }
 
@@ -441,7 +437,7 @@ const ShareView = () => {
 
     })
 
-    setFiles(newFiles)
+    setFiles(newFiles);
     
   }
   
@@ -468,9 +464,7 @@ const ShareView = () => {
 
     }
 
-
     const currentNode: any = findCurrentNodeElement(e);
-    console.log('mouseUpCurrentNode ', currentNode);
 
     if(currentNode && currentNode.childNodes[0].currentSrc && currentNode.childNodes[0] && (typeof currentNode.childNodes[0].currentSrc === 'string') && currentNode.childNodes[0].currentSrc.includes('directory')){
 
@@ -490,7 +484,7 @@ const ShareView = () => {
 
       return target.parentNode;
 
-    }else{
+    } else {
 
       return target;
 
@@ -543,16 +537,13 @@ const ShareView = () => {
 
     }
     
-
     e.preventDefault();
     e.stopPropagation();
-    console.log(contextRef);
-    console.log(e.clientX, e.clientY);
     if( contextRef && contextRef.current){
 
-      contextRef.current.style.position = 'fixed';
       contextRef.current.style.top = e.pageY + 'px';
       contextRef.current.style.left= e.pageX + 'px';
+      contextRef.current.style.position = 'fixed';
       contextRef.current.style.zIndex='2';
 
     }
@@ -566,7 +557,6 @@ const ShareView = () => {
     }
 
     //file Modal 에 context에 전달 필요
-
     setContextOpen(true);
     setContextType('file');
 
