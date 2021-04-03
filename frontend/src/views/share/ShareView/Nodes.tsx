@@ -7,17 +7,36 @@ import React, { Component } from 'react';
 //     contextOpen : false,
 //   })
 // })
-class Nodes extends Component {
 
-  constructor(props) {
-    super(props);
-    this.contextRef = React.createRef();
-    this.state = {
-      contextOpen: false
-    }
+type State = {
+  contextOpen : boolean,
+}
+
+type file = {
+  name: string,
+  type: string,
+  active?: boolean,
+
+}
+
+type Props  = {
+  files : file[],
+  path  : string[],
+  onClickContextMenu : (e: { preventDefault: () => void; stopPropagation: () => void; clientX: any; clientY: any; pageY: string; pageX: string; }, idx: number, file: file)=> void,
+  onNodeClick: (idx: number, file: file) => void,
+  onFolderClick : (folderName: string) => void,
+  prevFolderClick : () => void,
+}
+
+
+class Nodes extends Component<Props, State> {
+  contextRef: React.RefObject<HTMLElement> = React.createRef();
+  state : State = {
+    contextOpen: false
   }
+  
 
-  onContextMenu = (e, idx, file) => {
+  onContextMenu = (e: any, idx: number, file: file) : void => {
 
     e.preventDefault();
 
@@ -28,7 +47,7 @@ class Nodes extends Component {
   }
 
 
-  onNodeClick = (idx, file) => {
+  onNodeClick = (idx: number, file: file) : void=> {
     console.log('onNodeClick');
     this.setState({
       contextOpen : false,
@@ -38,28 +57,27 @@ class Nodes extends Component {
 
 
 
-  folderClick = (folderName) => {
+  folderClick = (folderName: string) => {
     this.props.onFolderClick(folderName);
 
   }
 
   prevFolderClick = () => {
-    this.props.prevFolderClick()
+    this.props.prevFolderClick();
   }
 
 
-  onDrop = (e) => {
+  onDrop = (e: React.MouseEvent<HTMLDivElement>): void => {
     console.log('onDrop', e);
   }
 
-  allowDrop = (e) => {
+  allowDrop = (e: React.MouseEvent<HTMLDivElement>): void=> {
     console.log('allowDrop', e);
   }
 
-  onDrag = (e) => {
+  onDrag = (e: React.MouseEvent<HTMLDivElement>): void => {
      console.log('e', e);
   }
-
 
   render() {
     const { files } = this.props;
@@ -99,8 +117,7 @@ class Nodes extends Component {
             return (
               <div key={file.name} className={`Node ${file.active ? 'active' : ''}`}
                 onClick={() => { this.onNodeClick(idx, file) }}
-                // drag={true}
-                // onDrag={this.onDrag}
+
                 onContextMenu={(e) => { this.onContextMenu(e, idx, file) }}>
                 <img src="/static/images/asset/cat.jpg" alt="이미지" 
 

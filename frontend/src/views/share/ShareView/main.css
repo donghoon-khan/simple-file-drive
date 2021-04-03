@@ -3,8 +3,8 @@
     border: 1px solid #ccc;
     background-color: #fff;
     border-radius: 5px;
-    width: 800px;
-    height: 600px;
+    width: 103%;
+    height: 100%;
     /* height: 300px; */
 }
 
@@ -25,6 +25,10 @@ h1 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+header { 
+    align-self: flex-start;
 }
 
 main {
@@ -67,6 +71,8 @@ main {
     flex-direction: row;
     justify-content: flex-start;
     flex-wrap: wrap;
+    /* align-items: center; */
+    /* justify-content: space-between; */
 }
 
 .Node {
@@ -235,7 +241,7 @@ nav {
   z-index: calc( 10 - var(--n) );
   /* border: 2px solid black; */
   border-radius: 2px;
-  box-shadow: 0 3px 5px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 6px 6px rgba(0, 0, 0, 0.3);
   width: 150px;
   height: 30px;
 }
@@ -244,8 +250,9 @@ nav {
 
 
 .dragContainer > .count{
-  background-color:red;
+  background-color:#f40057;
   position: relative;
+  color: white;
   top: -5px;
   left: 140px;
   
