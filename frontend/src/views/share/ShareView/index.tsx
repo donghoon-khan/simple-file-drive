@@ -43,28 +43,38 @@ document.addEventListener('keyup', (e) => {
 
 });
 
+type file = {
+  name: string,
+  type: string,
+  active?: boolean
+}
+
+type DragMode = {
+  mode: boolean,
+  dragElements: file[]
+}
 
 let clickStartIndex = -1;
 
 const ShareView = () => {
 
-  const [files, setFiles] = useState([]);
-  const [path, setPath] = useState(['/']);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [fileName, setFileName] = useState('');
-  const [mode , setMode] = useState(false);
-  const [dragMode , setDragMode] = useState({mode: false, dragElements : []});
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [contextOpen, setContextOpen] = useState(false);
-  const [mouseRangeDrag, setMouseRangeDrag] = useState(true);
-  const [modalType, setModalType] = useState('NEW_DIRECTORY');
+  const [files, setFiles] = useState<file[]>([]);
+  const [path, setPath] = useState<string[]>(['/']);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string>('');
+  const [mode , setMode] = useState<boolean>(false);
+  const [dragMode , setDragMode] = useState<DragMode>({mode: false, dragElements : []});
+  const [position, setPosition] = useState<{x: number, y: number}>({ x: 0, y: 0 });
+  const [contextOpen, setContextOpen] = useState<boolean>(false);
+  const [mouseRangeDrag, setMouseRangeDrag] = useState<boolean>(true);
+  const [modalType, setModalType] = useState<string>('NEW_DIRECTORY');
 
   const [contextType, setContextType] = useState('file');
   
 
-  const focusRef = useRef(null);
-  const contextRef = useRef(null);
-  const dragRef = useRef(null);
+  const focusRef = useRef<HTMLDivElement>(null);
+  const contextRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
 
@@ -72,7 +82,7 @@ const ShareView = () => {
 
   }, []);
 
-  function findData(path) {
+  function findData(path: string) : void{
 
 
       axios.get(`/directory/${path}`).then(res => {
@@ -83,7 +93,7 @@ const ShareView = () => {
 
   };
 
-  function onNodeClick(idx, file) {
+  function onNodeClick(idx: number, file: file) : void{
 
     const updateFile = [...files];
     if (cntrlIsPressed) {
@@ -144,7 +154,7 @@ const ShareView = () => {
 
   }
 
-  function onFolderClick(newPath) {
+  function onFolderClick(newPath: string) {
 
     setPath([...path, `/${newPath}`]);
 
@@ -166,7 +176,7 @@ const ShareView = () => {
 
   }
 
-  function onConfirmModal(data) {
+  function onConfirmModal(data: string) {
 
     if(modalType==='NEW_DIRECTORY'){
 
@@ -222,13 +232,13 @@ const ShareView = () => {
 
   }
 
-  function onChanageFileName(e) {
+  function onChanageFileName(e: any) {
 
     setFileName(e.target.value);
 
   }
 
-  function onClickBread(pathName) {
+  function onClickBread(pathName: string) {
 
     const pathIndex = path.findIndex(item => {
 
@@ -253,49 +263,68 @@ const ShareView = () => {
 
   }
 
-  function onMouseDown(e) {
+  function onMouseDown(e: any) {
 
     console.log(document.elementFromPoint(e.clientX, e.clientY));
     const pointElement = document.elementFromPoint(e.clientX, e.clientY);
     setContextOpen(false);
-    
-    console.log('pointElement.className', pointElement.className);
-    if(pointElement.className && pointElement.className.includes('App')||pointElement.className.includes('Nodes') || e.ctrlKey || e.shiftKey){ //1. 메인 클릭했을때 드래그 범위 나오도록 해야함
-
-      //2.컨트롤 클릭했을 때도 드래그 범위나오도록
-      e.stopPropagation();
-
-      if(e.button===0) {
+    if(pointElement){
+      
+      console.log('pointElement.className', pointElement.className);
+      if(pointElement.className && pointElement.className.includes('App')||pointElement.className.includes('Nodes') || e.ctrlKey || e.shiftKey){ //1. 메인 클릭했을때 드래그 범위 나오도록 해야함
   
-        setMode(true);
-        setPosition({x: e.clientX, y: e.clientY})
-        focusRef.current.style.display = 'block';
-        if (!e.shiftKey && !e.ctrlKey) {
+        //2.컨트롤 클릭했을 때도 드래그 범위나오도록
+        e.stopPropagation();
+  
+        if(e.button===0) {
+    
+          setMode(true);
+          setPosition({x: e.clientX, y: e.clientY})
+          if(focusRef && focusRef.current){
 
-          clearSelectedFiles();
+            focusRef.current.style.display = 'block';
+
+          }
+          if (!e.shiftKey && !e.ctrlKey) {
+  
+            clearSelectedFiles();
+  
+          }
+          clearContextOpen();
+          
+        }
+  
+      } else if(pointElement.className.includes('Node ') || pointElement.tagName ==='IMG'){
+        
+        //여기서 한번 files 해줘야함 컨트롤 클릭은 위로 가니까 밑에 
+        //그냥 클릭할때 원래 active 취소하고
+        //얘가 액티브가 아니라면 액티브를 해주고 다른건 다 취소해야댄다
+        const pointElement = document.elementFromPoint(e.clientX, e.clientY);
+
+        if(pointElement){
+
+          const targetElement: any = pointElement.tagName==='IMG' ? pointElement.parentNode : document.elementFromPoint(e.clientX, e.clientY);
+          // console.log('targetElement', targetElement.className.includes('Node active'));
+
+          if(targetElement){
+
+            if( !targetElement.className.includes('Node active')){
+      
+              clearSelectedFiles();
+              targetElement.className = 'Node active';
+              setActiveFiles(e);
+      
+            }
+            const activeFiles = files.filter((file) => file.active);
+      
+            setDragMode({ mode: true, dragElements: activeFiles });
+
+          }
 
         }
-        clearContextOpen();
-        
+
+  
       }
-
-    } else if(pointElement.className.includes('Node ') || pointElement.tagName ==='IMG'){
-      
-      //여기서 한번 files 해줘야함 컨트롤 클릭은 위로 가니까 밑에 
-      //그냥 클릭할때 원래 active 취소하고
-      //얘가 액티브가 아니라면 액티브를 해주고 다른건 다 취소해야댄다
-      const targetElement = document.elementFromPoint(e.clientX, e.clientY).tagName==='IMG' ? document.elementFromPoint(e.clientX, e.clientY).parentNode : document.elementFromPoint(e.clientX, e.clientY);
-      console.log('targetElement', targetElement.className.includes('Node active'));
-      if(!targetElement.className.includes('Node active')){
-
-        clearSelectedFiles();
-        targetElement.className = 'Node active';
-        setActiveFiles(e);
-
-      }
-      const activeFiles = files.filter((file) => file.active);
-
-      setDragMode({ mode: true, dragElements: activeFiles });
 
     }
 
@@ -305,7 +334,7 @@ const ShareView = () => {
 
   
 
-  function boxIntersects (boxA, boxB) {
+  function boxIntersects (boxA: {top: number, left: number, width: number, height: number}, boxB: {top: number, left: number, width: number, height: number}) {
 
     if(boxA.left <= boxB.left + boxB.width &&
       boxA.left + boxA.width >= boxB.left &&
@@ -320,7 +349,7 @@ const ShareView = () => {
 
   }
 
-  function onMouseMove(e){
+  function onMouseMove(e: any){
     
     e.preventDefault();
     e.stopPropagation();
@@ -333,15 +362,18 @@ const ShareView = () => {
 
       const width = Math.max(x - position.x, position.x - x);
       const left = Math.min(position.x, x);
-      focusRef.current.style.left = `${left}px`;
-      
-      focusRef.current.style.width = `${width}px`;
-  
       const height = Math.max(y - position.y, position.y - y);
       const top = Math.min(position.y, y);
-      focusRef.current.style.height = `${height}px`;
-      focusRef.current.style.top = `${top}px`;
-      focusRef.current.style.zIndex='50';
+      
+      if(focusRef && focusRef.current){
+
+        focusRef.current.style.left = `${left}px`;
+        focusRef.current.style.width = `${width}px`;
+        focusRef.current.style.height = `${height}px`;
+        focusRef.current.style.top = `${top}px`;
+        focusRef.current.style.zIndex='50';
+
+      }
 
       const nodes = document.getElementsByClassName('Node');
       //신나게 Node를 돌면서 드래그 박스안에 있는지 확인한다.
@@ -381,9 +413,13 @@ const ShareView = () => {
       let x = e.clientX;
       let y = e.clientY;
 
-      dragRef.current.style.position = 'fixed';
-      dragRef.current.style.left = `${x+5}px`;
-      dragRef.current.style.top = `${y+5}px`;
+      if( dragRef && dragRef.current){
+
+        dragRef.current.style.position = 'fixed';
+        dragRef.current.style.left = `${x+5}px`;
+        dragRef.current.style.top = `${y+5}px`;
+
+      }
 
     }
 
@@ -409,26 +445,34 @@ const ShareView = () => {
     
   }
   
-  function onMouseUp(e) {
+  function onMouseUp(e: any) {
 
     e.stopPropagation();
     setMode(false);
     setDragMode({mode: false, dragElements : []});
-    
-    focusRef.current.style.display = 'none';
-    focusRef.current.style.height = `0px`;
-    focusRef.current.style.width = `0px`;
-    focusRef.current.style.top = `0px`;
-    focusRef.current.style.left = `0px`;
+    if(focusRef && focusRef.current){
 
-    dragRef.current.style.position = 'fixed';
-    dragRef.current.style.left = `${0}px`;
-    dragRef.current.style.top = `${0}px`;
+      focusRef.current.style.display = 'none';
+      focusRef.current.style.height = `0px`;
+      focusRef.current.style.width = `0px`;
+      focusRef.current.style.top = `0px`;
+      focusRef.current.style.left = `0px`;
 
-    const currentNode = findCurrentNodeElement(e);
+    }
+
+    if(dragRef && dragRef.current){
+
+      dragRef.current.style.position = 'fixed';
+      dragRef.current.style.left = `${0}px`;
+      dragRef.current.style.top = `${0}px`;
+
+    }
+
+
+    const currentNode: any = findCurrentNodeElement(e);
     console.log('mouseUpCurrentNode ', currentNode);
 
-    if(currentNode.childNodes[0].currentSrc && currentNode.childNodes[0].currentSrc.includes('directory')){
+    if(currentNode && currentNode.childNodes[0].currentSrc && currentNode.childNodes[0] && (typeof currentNode.childNodes[0].currentSrc === 'string') && currentNode.childNodes[0].currentSrc.includes('directory')){
 
       console.log('이동 구현필요');
 
@@ -439,10 +483,10 @@ const ShareView = () => {
     
   }
 
-  function findCurrentNodeElement(e) {
+  function findCurrentNodeElement(e: any) {
 
     const target = document.elementFromPoint(e.clientX, e.clientY);
-    if(target.tagName==='IMG'){
+    if(target && target.tagName==='IMG'){
 
       return target.parentNode;
 
@@ -454,7 +498,7 @@ const ShareView = () => {
 
   }
 
-  function setActiveFiles (e) {
+  function setActiveFiles (e: any) {
 
     const activeNodes = document.getElementsByClassName('Node active');
 
@@ -489,7 +533,7 @@ const ShareView = () => {
 
   }
 
-  function onClickContextMenu (e, idx, file) {
+  function onClickContextMenu (e: any, idx: number, file: file) {
 
     const activeFiles = files.filter((file) => file.active);
     
@@ -504,16 +548,20 @@ const ShareView = () => {
     e.stopPropagation();
     console.log(contextRef);
     console.log(e.clientX, e.clientY);
-    contextRef.current.style.position = 'fixed';
-    contextRef.current.style.top = e.pageY + 'px';
-    contextRef.current.style.left= e.pageX + 'px';
-    contextRef.current.style.zIndex='2';
+    if( contextRef && contextRef.current){
+
+      contextRef.current.style.position = 'fixed';
+      contextRef.current.style.top = e.pageY + 'px';
+      contextRef.current.style.left= e.pageX + 'px';
+      contextRef.current.style.zIndex='2';
+
+    }
     //여러개일때 분기 한번 필요
     //한개일때 ? 
     
-    if(!file.active){
+    if(file && !file.active){
 
-      this.onNodeClick(idx, file);
+      onNodeClick(idx, file);
 
     }
 
@@ -527,8 +575,12 @@ const ShareView = () => {
   function clearContextOpen() {
 
     setContextOpen(false);
-    console.log('clearContextOpen', contextRef.current.style);
-    contextRef.current.style.display = 'none';
+
+    if( contextRef && contextRef.current){
+
+      contextRef.current.style.display = 'none';
+
+    }
 
   }
 
@@ -588,15 +640,19 @@ const ShareView = () => {
 
   }
 
-  function mainContextMenu (e) {
+  function mainContextMenu (e: any) {
 
     e.preventDefault();
     console.log('mainContextMenu', e)
     setContextType('background');
-    contextRef.current.style.position = 'fixed';
-    contextRef.current.style.top = e.pageY + 'px';
-    contextRef.current.style.left= e.pageX + 'px';
-    contextRef.current.style.zIndex='2';
+    if(contextRef && contextRef.current){
+
+      contextRef.current.style.position = 'fixed';
+      contextRef.current.style.top = e.pageY + 'px';
+      contextRef.current.style.left= e.pageX + 'px';
+      contextRef.current.style.zIndex='2';
+
+    }
     setContextOpen(true);
 
   }
@@ -638,9 +694,9 @@ const ShareView = () => {
                 <h1>고양이 사진첩</h1>
               </header>
               <main className="App"
-                onMouseDown={mouseRangeDrag ? onMouseDown : null} 
+                onMouseDown={onMouseDown } 
                 onMouseMove={onMouseMove} 
-                onMouseUp={mouseRangeDrag ? onMouseUp: null}
+                onMouseUp={onMouseUp}
                 onContextMenu={mainContextMenu}
               >
                 <nav>
@@ -696,8 +752,8 @@ const ShareView = () => {
             dragMode.dragElements.map((file, idx) => {
 
               return <div
-              
-              className="item" style={{'--n': idx }}>
+                key={file.name}
+                className="item">
                 {file.name}
               </div>
 

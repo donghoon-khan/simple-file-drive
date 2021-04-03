@@ -11,7 +11,7 @@ import ProductListView from 'src/views/product/ProductListView';
 import RegisterView from 'src/views/auth/RegisterView';
 import SettingsView from 'src/views/settings/SettingsView';
 import FileView from './views/files/Files';
-import ShareView from './views/share/ShareView/index.js';
+import ShareView from './views/share/ShareView/index.tsx';
 
 const routes = [
   {

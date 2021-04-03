@@ -22,7 +22,7 @@ type file = {
 type Props  = {
   files : file[],
   path  : string[],
-  onClickContextMenu : (e: { preventDefault: () => void; stopPropagation: () => void; clientX: any; clientY: any; pageY: string; pageX: string; }, idx: number, file: file)=> void,
+  onClickContextMenu : (e: any, idx: number, file: file)=> void,
   onNodeClick: (idx: number, file: file) => void,
   onFolderClick : (folderName: string) => void,
   prevFolderClick : () => void,
