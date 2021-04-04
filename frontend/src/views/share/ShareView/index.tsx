@@ -1,5 +1,5 @@
 /* eslint padded-blocks: ["error", "always"] */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Box, Container, Card, Button } from '@material-ui/core';
 
@@ -74,6 +74,7 @@ const ShareView = () => {
   const focusRef = useRef<HTMLDivElement>(null);
   const contextRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<HTMLDivElement>(null);
+  let nodesRef = useRef<any>(null);
   
   useEffect(() => {
 
@@ -91,6 +92,12 @@ const ShareView = () => {
       })
 
   };
+
+  function setNodesRef(ref : any) {
+
+    nodesRef = ref;
+
+  }
 
   function onNodeClick(idx: number, file: file): void {
 
@@ -265,12 +272,15 @@ const ShareView = () => {
   function onMouseDown(e: any) {
 
     console.log(document.elementFromPoint(e.clientX, e.clientY));
-    const pointElement = document.elementFromPoint(e.clientX, e.clientY);
+    const pointElement: any = document.elementFromPoint(e.clientX, e.clientY);
     setContextOpen(false);
+
+    console.log('nodesRefnodesRefnodesRefnodesRefnodesRefnodesRef', nodesRef, pointElement, pointElement === nodesRef);
+
     if(pointElement){
       
       console.log('pointElement.className', pointElement.className);
-      if(pointElement.className && pointElement.className.includes('App')||pointElement.className.includes('Nodes') || e.ctrlKey || e.shiftKey){ //1. 메인 클릭했을때 드래그 범위 나오도록 해야함
+      if(pointElement.className && pointElement.className.includes('App')||pointElement === nodesRef || pointElement === nodesRef.current || e.ctrlKey || e.shiftKey){ //1. 메인 클릭했을때 드래그 범위 나오도록 해야함
   
         //2.컨트롤 클릭했을 때도 드래그 범위나오도록
         e.stopPropagation();
@@ -696,9 +706,9 @@ const ShareView = () => {
                   onClickBread={onClickBread}
                   path={path} />
                 <Nodes
+                  setNodesRef={setNodesRef}
                   files={files}
                   path={path}
-
                   onNodeClick={onNodeClick}
                   onFolderClick={onFolderClick}
                   prevFolderClick={prevFolderClick}

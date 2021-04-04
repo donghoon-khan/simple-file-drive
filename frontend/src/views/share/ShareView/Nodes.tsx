@@ -1,12 +1,28 @@
-import { FilledInput } from '@material-ui/core';
-import axios from 'axios';
-import React, { Component } from 'react';
-// eslint-disable-next-line react/prefer-stateless-function
-// document.addEventListener('click', () => {
-//   this.setState({
-//     contextOpen : false,
-//   })
-// })
+import React, { Component, RefObject } from 'react';
+import styled from 'styled-components';
+
+const NodesBlock = styled.div`
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+
+.Node {
+  width: 140px;
+  height: 150px;
+  padding: 12px;
+  margin: 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  word-break: keep-all;
+}
+
+.Node img{
+  min-height: 105px;
+}
+`; 
 
 type State = {
   contextOpen : boolean,
@@ -26,6 +42,7 @@ type Props  = {
   onNodeClick: (idx: number, file: file) => void,
   onFolderClick : (folderName: string) => void,
   prevFolderClick : () => void,
+  setNodesRef : (ref: HTMLDivElement | null) => void,
 }
 
 
@@ -33,6 +50,10 @@ class Nodes extends Component<Props, State> {
   contextRef: React.RefObject<HTMLElement> = React.createRef();
   state : State = {
     contextOpen: false
+  }
+  
+  setNodesRef = (ref: HTMLDivElement | null) => {
+    this.props.setNodesRef(ref);
   }
   
 
@@ -83,7 +104,7 @@ class Nodes extends Component<Props, State> {
     const { files } = this.props;
     console.log(this.state.contextOpen);
     return (
-      <div className="Nodes">
+      <NodesBlock ref={(ref) => { this.setNodesRef(ref) }}>
         {
           this.props.path.length > 1 ?
             <div className="Node"
@@ -130,7 +151,7 @@ class Nodes extends Component<Props, State> {
           })
         }
 
-      </div>
+      </NodesBlock>
     )
   }
 }

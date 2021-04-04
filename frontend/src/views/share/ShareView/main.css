@@ -5,7 +5,6 @@
     border-radius: 5px;
     width: 103%;
     height: 100%;
-    /* height: 300px; */
 }
 
 
@@ -66,29 +65,6 @@ main {
 }
 
 
-.Nodes {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    /* align-items: center; */
-    /* justify-content: space-between; */
-}
-
-.Node {
-    width: 140px;
-    height: 150px;
-    padding: 12px;
-    margin: 8px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    word-break: keep-all;
-}
-
-.Node img{
-    min-height: 105px;
-}
 
 .modal-Wrapper{
     position: absolute;
@@ -155,7 +131,6 @@ main {
 
 .Node.active {
     background-color : #e3f2fd;
-    /* transition: 0.3s ease-in-out; */
 }
 
 #context_menu {
@@ -172,7 +147,6 @@ ul{
 }
 
 #context_menu li{
-    /* padding: 7px; */
     font-size: 10px;
     transition: 0.3s linear;
     border-bottom: 1px solidfv #b1bfca;
@@ -195,13 +169,10 @@ ul{
 nav {
     display: flex;
     flex-direction: row-reverse;
-    /* justify-content: ; */
 }
 
 .modal-Wrapper{
     position: absolute;
-    /* width: 100%;
-    height: 100%; */
     display: flex;
     align-content: center;
     justify-content: center;
@@ -225,11 +196,6 @@ nav {
 }
 
 .dragContainer{
-    /* background-color: #e3f2fd; */
-    /* width: 200px; */
-    /* min-height: 50px; */
-    /* border-radius: 10px; */
-    /* border: 2px solid #b1bfca; */
     position: relative;
 }
 
@@ -239,7 +205,6 @@ nav {
   top: calc( var(--n) * 3px );
   background-color: #e3f2fd;
   z-index: calc( 10 - var(--n) );
-  /* border: 2px solid black; */
   border-radius: 2px;
   box-shadow: 0 6px 6px 6px rgba(0, 0, 0, 0.3);
   width: 150px;
@@ -255,16 +220,11 @@ nav {
   color: white;
   top: -5px;
   left: 140px;
-  
   width: 25px;
   height: 25px;
   z-index: 15;
-  
   text-align: center;
-  
   border-radius: 100%;
-  
-
 }
 
 .dragElement{
