@@ -1,14 +1,37 @@
-server:
-  port: 8080
-  error:
-    include-exception: true
-    include-message: always
-
 spring:
+  profiles:
+    active: local
+
+---
+spring:
+  profiles: local
   servlet:
     multipart:
       enabled: true
       max-file-size: 1GB
       max-request-size: 1GB
 
+server:
+  port: 8080
+  error:
+    include-exception: true
+    include-message: always
+
 basePath: /Users/kangdonghoon/github/http-file-server/test-data
+
+---
+spring:
+  profiles: prod
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_REQUEST_SIZE}
+
+server:
+  port: ${SERVER_PORT}
+  error:
+    include-exception: true
+    include-message: always
+
+basePath: ${BASE_PATH}
