@@ -69,6 +69,7 @@ const App = () => {
     function (error) {
       // 오류 응답을 처리
       // ...
+      setModalOpen(false);
       return Promise.reject(error);
     });
 

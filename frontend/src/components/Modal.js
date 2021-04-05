@@ -37,7 +37,7 @@ export default function CustomModal(props) {
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         className={classes.modal}
-        open={props.open}
+        open={handleOpen}
         onClose={handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}

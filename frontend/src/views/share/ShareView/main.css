@@ -3,9 +3,8 @@
     border: 1px solid #ccc;
     background-color: #fff;
     border-radius: 5px;
-    width: 800px;
-    height: 600px;
-    /* height: 300px; */
+    width: 103%;
+    height: 100%;
 }
 
 
@@ -25,6 +24,10 @@ h1 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+header { 
+    align-self: flex-start;
 }
 
 main {
@@ -62,48 +65,42 @@ main {
 }
 
 
-.Nodes {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-}
 
-.Node {
-    width: 140px;
-    height: 150px;
-    padding: 12px;
-    margin: 8px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    word-break: keep-all;
-}
-
-.Node img{
-    min-height: 105px;
-}
-
-.Modal-Wrapper{
+.modal-Wrapper{
     position: absolute;
     left: 0;
     top: 0;
-    right: 0;
-    bottom: 0;
+    
+    width: 100%;
+    height: 100%;
 
-    /* background-color: #ccc; */
+    
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.8);
-    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.8);
+    transition: 1s linear;
+    z-index: 3;
 }
 
-.Modal-Content{
-    width: 510px;
-    height: 510px;
-    border-color: 1px solid black;
-    border-radius: 5em;
+.modal-Content{
+    width: 500px;
+    height: 200px;
+    border: 1px solid black;
+    
+    display: flex;
+    justify-content: center;
+    background-color:#E1E2E1; 
+    flex-direction: column;
+    align-items:center;
+}
+
+.modal-Content input{
+    margin: 15px;
+}
+
+.modal-Content div button {
+    margin: 10px;
 }
 
 .Modal-Content img{
@@ -134,7 +131,6 @@ main {
 
 .Node.active {
     background-color : #e3f2fd;
-    /* transition: 0.3s ease-in-out; */
 }
 
 #context_menu {
@@ -151,11 +147,16 @@ ul{
 }
 
 #context_menu li{
-    padding: 7px;
     font-size: 10px;
     transition: 0.3s linear;
-    border-bottom: 1px solid #b1bfca;
+    border-bottom: 1px solidfv #b1bfca;
     
+}
+
+#context_menu li a {
+    width: 100%;
+    display: block;
+    padding: 7px;
 }
 
 #context_menu li:hover{
@@ -168,13 +169,10 @@ ul{
 nav {
     display: flex;
     flex-direction: row-reverse;
-    /* justify-content: ; */
 }
 
 .modal-Wrapper{
     position: absolute;
-    /* width: 100%;
-    height: 100%; */
     display: flex;
     align-content: center;
     justify-content: center;
@@ -188,7 +186,48 @@ nav {
     z-index: 50;
 }
 
+.dragItem {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    z-index: 6;
+    position: fixed;
+    
+}
 
-.MuiAppBar-root{
-    background-color: aqua;
+.dragContainer{
+    position: relative;
+}
+
+.dragContainer > .item{
+  position: absolute;
+  left: calc( var(--n) * 3px  );
+  top: calc( var(--n) * 3px );
+  background-color: #e3f2fd;
+  z-index: calc( 10 - var(--n) );
+  border-radius: 2px;
+  box-shadow: 0 6px 6px 6px rgba(0, 0, 0, 0.3);
+  width: 150px;
+  height: 30px;
+}
+
+
+
+
+.dragContainer > .count{
+  background-color:#f40057;
+  position: relative;
+  color: white;
+  top: -5px;
+  left: 140px;
+  width: 25px;
+  height: 25px;
+  z-index: 15;
+  text-align: center;
+  border-radius: 100%;
+}
+
+.dragElement{
+    background-color: black;
+    color: white;
 }
