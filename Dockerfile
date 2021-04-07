@@ -3,7 +3,7 @@ ARG             spring_profile=prod
 ARG             jar=target/*.jar
 
 ## Build stage
-FROM            openjdk:8-jre-alpine AS builder
+FROM            openjdk:11-jre-alpine AS builder
 
 ARG             application_name
 ARG             jar=target/*.jar
@@ -18,7 +18,7 @@ COPY            ${JAR_FILE} ${APPLICATION}.jar
 RUN             java -Djarmode=layertools -jar ${APPLICATION}.jar extract
 
 ## Release stage
-FROM            openjdk:8-jre-alpine
+FROM            openjdk:11-jre-alpine
 
 ARG             application_name
 ARG             spring_profile
