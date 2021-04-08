@@ -22,9 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping(value = "/api/file")
 public class FileController {
