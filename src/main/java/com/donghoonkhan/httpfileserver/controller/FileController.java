@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping(value = "/file")
+@RequestMapping(value = "/api/file")
 public class FileController {
     
     private final FileService fileService;

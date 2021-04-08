@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping(value = "/directory")
+@RequestMapping(value = "/api/directory")
 public class DirectoryController {
 
     private final DirectoryService directoryService;
