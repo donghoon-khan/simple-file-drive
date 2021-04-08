@@ -1,4 +1,4 @@
-package com.donghoonkhan.httpfileserver.config;
+package com.donghoonkhan.simplefiledrive.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
