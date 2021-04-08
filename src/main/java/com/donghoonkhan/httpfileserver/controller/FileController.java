@@ -22,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/file")
 public class FileController {
@@ -79,9 +81,9 @@ public class FileController {
     }
 
     private String getRelPath(HttpServletRequest request) {
-        if (request.getRequestURI().equals("/file")) {
+        if (request.getRequestURI().equals("/api/file")) {
             return basePath;
         }
-        return basePath + request.getRequestURI().split(request.getContextPath() + "/file")[1];
+        return basePath + request.getRequestURI().split(request.getContextPath() + "/api/file")[1];
     }
 }

@@ -71,9 +71,9 @@ public class DirectoryController {
     }
 
     private String getRelPath(HttpServletRequest request) {
-        if (request.getRequestURI().equals("/directory")) {
+        if (request.getRequestURI().equals("/api/directory")) {
             return basePath;
         }
-        return basePath + request.getRequestURI().split(request.getContextPath() + "/directory")[1];
+        return basePath + request.getRequestURI().split(request.getContextPath() + "/api/directory")[1];
     }
 }
