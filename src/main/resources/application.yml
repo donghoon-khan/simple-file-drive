@@ -5,6 +5,10 @@ spring:
 ---
 spring:
   profiles: local
+  security:
+    user:
+      name: admin
+      password: admin
   servlet:
     multipart:
       enabled: true
@@ -22,6 +26,10 @@ basePath: /Users/kangdonghoon/github/http-file-server/test-data
 ---
 spring:
   profiles: prod
+  security:
+    user:
+      name: ${USER_NAME}
+      password: ${PASSWORD}
   servlet:
     multipart:
       enabled: true
