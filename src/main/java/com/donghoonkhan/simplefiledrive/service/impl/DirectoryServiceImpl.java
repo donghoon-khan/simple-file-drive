@@ -1,4 +1,4 @@
-package com.donghoonkhan.httpfileserver.service.impl;
+package com.donghoonkhan.simplefiledrive.service.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.donghoonkhan.httpfileserver.model.FileObject;
-import com.donghoonkhan.httpfileserver.service.DirectoryService;
+import com.donghoonkhan.simplefiledrive.model.FileObject;
+import com.donghoonkhan.simplefiledrive.service.DirectoryService;
 
 import org.springframework.stereotype.Service;
 

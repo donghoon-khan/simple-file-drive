@@ -1,12 +1,12 @@
-package com.donghoonkhan.httpfileserver.controller;
+package com.donghoonkhan.simplefiledrive.controller;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.donghoonkhan.httpfileserver.model.FileObject;
-import com.donghoonkhan.httpfileserver.service.DirectoryService;
+import com.donghoonkhan.simplefiledrive.model.FileObject;
+import com.donghoonkhan.simplefiledrive.service.DirectoryService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

@@ -1,9 +1,9 @@
-package com.donghoonkhan.httpfileserver.service;
+package com.donghoonkhan.simplefiledrive.service;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.donghoonkhan.httpfileserver.model.FileObject;
+import com.donghoonkhan.simplefiledrive.model.FileObject;
 
 public interface DirectoryService {
     

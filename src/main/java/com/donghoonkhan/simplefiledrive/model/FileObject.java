@@ -1,4 +1,4 @@
-package com.donghoonkhan.httpfileserver.model;
+package com.donghoonkhan.simplefiledrive.model;
 
 import java.time.Instant;
 

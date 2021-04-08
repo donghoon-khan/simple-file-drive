@@ -1,4 +1,4 @@
-package com.donghoonkhan.httpfileserver.service;
+package com.donghoonkhan.simplefiledrive.service;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,7 +10,8 @@ import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.donghoonkhan.httpfileserver.service.impl.DirectoryServiceImpl;
+import com.donghoonkhan.simplefiledrive.service.DirectoryService;
+import com.donghoonkhan.simplefiledrive.service.impl.DirectoryServiceImpl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

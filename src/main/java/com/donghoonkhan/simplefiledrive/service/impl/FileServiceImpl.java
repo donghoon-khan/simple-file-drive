@@ -1,4 +1,4 @@
-package com.donghoonkhan.httpfileserver.service.impl;
+package com.donghoonkhan.simplefiledrive.service.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import com.donghoonkhan.httpfileserver.service.FileService;
+import com.donghoonkhan.simplefiledrive.service.FileService;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
