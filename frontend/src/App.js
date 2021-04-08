@@ -46,6 +46,7 @@ const App = () => {
 
   axios.interceptors.request.use(
     function (config) {
+      config.baseURL = '/api'
       // 요청을 보내기 전에 수행할 일
       setModalOpen(true);
       return config;
