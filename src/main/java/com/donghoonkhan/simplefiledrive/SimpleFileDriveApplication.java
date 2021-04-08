@@ -1,13 +1,13 @@
-package com.donghoonkhan.httpfileserver;
+package com.donghoonkhan.simplefiledrive;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HttpFileServerApplication {
+public class SimpleFileDriveApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HttpFileServerApplication.class, args);
+		SpringApplication.run(SimpleFileDriveApplication.class, args);
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.donghoonkhan.httpfileserver.controller;
+package com.donghoonkhan.simplefiledrive.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystemNotFoundException;
 import java.util.Date;
 
-import com.donghoonkhan.httpfileserver.model.ErrorResponse;
+import com.donghoonkhan.simplefiledrive.model.ErrorResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
