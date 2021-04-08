@@ -59,7 +59,7 @@ let clickStartIndex = -1;
 const ShareView = () => {
 
   const [files, setFiles] = useState<file[]>([]);
-  const [path, setPath] = useState<string[]>(['/']);
+  const [path, setPath] = useState<string[]>(['']);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [fileName, setFileName] = useState<string>('');
   const [mode , setMode] = useState<boolean>(false);
