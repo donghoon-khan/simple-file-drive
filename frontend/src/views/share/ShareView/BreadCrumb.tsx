@@ -10,8 +10,8 @@ const BreadCrumb = (props : Props) => {
 
   function onClickBread (path: string) : void {
     console.log('onClickBread', props.path);
-    if (path === '/Root') {
-      props.onClickBread('/');
+    if (path === '//') {
+      props.onClickBread('');
     } else {
       props.onClickBread(path);
     }
@@ -20,7 +20,7 @@ const BreadCrumb = (props : Props) => {
 
   const { path } = props;
 
-  const newPath = ['/Root', ...path.slice(1)];
+  const newPath = ['//', ...path.slice(1)];
   return (
 
     <>
