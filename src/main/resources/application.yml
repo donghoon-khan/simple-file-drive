@@ -37,7 +37,7 @@ spring:
       max-request-size: ${MAX_REQUEST_SIZE}
 
 server:
-  port: ${SERVER_PORT}
+  port: 8080
   error:
     include-exception: true
     include-message: always
