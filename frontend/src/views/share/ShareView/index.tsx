@@ -691,7 +691,7 @@ const ShareView = () => {
           <Box mt={3}>
             <div className="directory">
               <header>
-                <h1>고양이 사진첩</h1>
+                <h1>Simple File Drive</h1>
               </header>
               <main className="App"
                 onMouseDown={onMouseDown } 
