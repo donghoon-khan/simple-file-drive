@@ -84,8 +84,8 @@ const ShareView = () => {
 
   function findData(path: string) : void{
 
-
-      axios.get(`/directory/${path}`).then(res => {
+      
+      axios.get(`/directory${path}`).then(res => {
 
         setFiles(res.data);
 
@@ -188,7 +188,7 @@ const ShareView = () => {
 
       if (fileName !== '' && !fileName.includes('.')) {
   
-        axios.post(`/directory/${path.join('')}/${fileName}`).then((res) => {
+        axios.post(`/directory${path.join('')}/${fileName}`).then((res) => {
   
           setFiles([...files, { name: fileName, type: 'directory' }]);
           alert('폴더를 생성했습니다.')
@@ -275,11 +275,11 @@ const ShareView = () => {
     const pointElement: any = document.elementFromPoint(e.clientX, e.clientY);
     setContextOpen(false);
 
-    console.log('nodesRefnodesRefnodesRefnodesRefnodesRefnodesRef', nodesRef, pointElement, pointElement === nodesRef);
+    // console.log('nodesRefnodesRefnodesRefnodesRefnodesRefnodesRef', nodesRef, pointElement, pointElement === nodesRef);
 
     if(pointElement){
       
-      console.log('pointElement.className', pointElement.className);
+      // console.log('pointElement.className', pointElement.className);
       if(pointElement.className && pointElement.className.includes('App')||pointElement === nodesRef || pointElement === nodesRef.current || e.ctrlKey || e.shiftKey){ //1. 메인 클릭했을때 드래그 범위 나오도록 해야함
   
         //2.컨트롤 클릭했을 때도 드래그 범위나오도록
