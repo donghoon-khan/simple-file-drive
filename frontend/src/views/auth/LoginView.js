@@ -41,14 +41,15 @@ const LoginView = () => {
         <Container maxWidth="sm">
           <Formik
             initialValues={{
-              email: 'email',
+              username: 'username',
               password: 'password'
             }}
             validationSchema={Yup.object().shape({
-              email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+              username: Yup.string().max(255).required('UserName is required'),
               password: Yup.string().max(255).required('Password is required')
             })}
-            onSubmit={() => {
+            onSubmit={(values) => {
+              console.log(values);
               navigate('/app/share', { replace: true });
             }}
           >
@@ -83,12 +84,12 @@ const LoginView = () => {
                   error={Boolean(touched.email && errors.email)}
                   fullWidth
                   helperText={touched.email && errors.email}
-                  label="Email Address"
+                  label="UserName"
                   margin="normal"
-                  name="email"
+                  name="username"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  type="email"
+                  type="username"
                   value={values.email}
                   variant="outlined"
                 />
