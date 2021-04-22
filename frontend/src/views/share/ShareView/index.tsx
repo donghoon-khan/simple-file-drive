@@ -714,7 +714,6 @@ const ShareView = () => {
                   prevFolderClick={prevFolderClick}
                   onClickContextMenu={onClickContextMenu}
                 />
-                {/* <div className={`dragRange ${dragRange ? '' : 'hidden'}`} ref={focusRef}></div> */}
                 <div className="dragRange" ref={focusRef}></div>
               </main>
             </div>
@@ -744,10 +743,7 @@ const ShareView = () => {
         files={files}
       />
         <div ref={dragRef} className="dragContainer">
-          {/* <div className="item" style={{'--n': 1, }}>file.jpg</div>
-          <div className="item" style={{'--n': 2, }}>file.jpg</div>
-          <div className="item" style={{'--n': 3, }}>file.jpg</div> */}
-          {/* <div className="count">3</div> */}
+
           {
             dragMode.dragElements.map((file, idx) => {
 
