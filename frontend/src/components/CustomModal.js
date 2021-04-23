@@ -12,7 +12,9 @@ export default function CustomModal (props) {
     console.log('prop.type 출력 : ', props.type);
     if (props.type === 'NEW_DIRECTORY') {
       return <><h1>새 폴더</h1>
-        <input placeholder="폴더명을 입력해주세요" onChange={props.onChanageFileName} value={props.fileName}></input>
+        <input placeholder="폴더명을 입력해주세요" 
+        onChange={props.onChanageFileName} 
+        value={props.fileName}></input>
         <div>
           <Button variant="outlined" color="secondary" onClick={props.onConfirmModal}>확인</Button>
           <Button variant="outlined" color="primary" onClick={props.onCancelModal}>취소</Button>
@@ -23,8 +25,8 @@ export default function CustomModal (props) {
           ref={newFileInput}
           id="newFile"
           type="file"
-          onChange={newFileChnage}
-          // value={selectedFile}
+          onChange={newFileChange}
+          value={selectedFile}
         >
         </input>
         <div>
@@ -74,10 +76,10 @@ export default function CustomModal (props) {
 
   }
 
-  function newFileChnage(e){
-
+  function newFileChange(e){
+    e.stopPropagation();
     console.log('newFileChnage', e.target.files[0]);
-    setSelectedFile(e.target.files[0]);
+    // setSelectedFile(e.target.files[0]);
 
   }
 

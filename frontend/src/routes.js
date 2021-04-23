@@ -18,8 +18,6 @@ const routes = [
     path: '/',
     element: <MainLayout />,
     children: [
-      
-      
       { path: '404', element: <NotFoundView /> },
       { path: '/', element: <Navigate to="/app/share" /> },
       { path: '*', element: <Navigate to="/404" /> }
