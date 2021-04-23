@@ -15,6 +15,7 @@ let shiftIsPressed = false;
 
 document.addEventListener('keydown', (e) => {
 
+  e.stopPropagation();
   if (e.key === 'Control') {
 
     cntrlIsPressed = true;
@@ -31,6 +32,7 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('keyup', (e) => {
 
+  e.stopPropagation();
   if (e.key === 'Control') {
 
     cntrlIsPressed = false
@@ -240,6 +242,7 @@ const ShareView = () => {
 
   function onChanageFileName(e: any) {
 
+    e.stopPropagation();
     setFileName(e.target.value);
 
   }
@@ -271,6 +274,7 @@ const ShareView = () => {
 
   function onMouseDown(e: any) {
 
+    e.stopPropagation();
     console.log(document.elementFromPoint(e.clientX, e.clientY));
     const pointElement: any = document.elementFromPoint(e.clientX, e.clientY);
     setContextOpen(false);
@@ -489,6 +493,7 @@ const ShareView = () => {
 
   function findCurrentNodeElement(e: any) {
 
+    e.stopPropagation();
     const target = document.elementFromPoint(e.clientX, e.clientY);
     if(target && target.tagName==='IMG'){
 
@@ -504,6 +509,7 @@ const ShareView = () => {
 
   function setActiveFiles (e: any) {
 
+    e.stopPropagation();
     const activeNodes = document.getElementsByClassName('Node active');
 
     const newFiles = files;
@@ -538,7 +544,8 @@ const ShareView = () => {
   }
 
   function onClickContextMenu (e: any, idx: number, file: file) {
-
+    
+    e.stopPropagation();
     const activeFiles = files.filter((file) => file.active);
     
     if(activeFiles.length === 1){
@@ -547,8 +554,6 @@ const ShareView = () => {
 
     }
     
-    e.preventDefault();
-    e.stopPropagation();
     if( contextRef && contextRef.current){
 
       contextRef.current.style.top = e.pageY + 'px';
@@ -643,6 +648,7 @@ const ShareView = () => {
   function mainContextMenu (e: any) {
 
     e.preventDefault();
+    e.stopPropagation();
     console.log('mainContextMenu', e)
     setContextType('background');
     if(contextRef && contextRef.current){
