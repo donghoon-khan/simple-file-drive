@@ -4,7 +4,7 @@ import { Button } from '@material-ui/core';
 
 export default function CustomModal (props) {
   const newFileInput = useRef(null);
-  const [selectedFile, setSelectedFile] = useState('');
+  const [selectedFile, setSelectedFile] = useState({name:''});
 
   console.log('customModal selectedFile', selectedFile)
   
@@ -26,7 +26,7 @@ export default function CustomModal (props) {
           id="newFile"
           type="file"
           onChange={newFileChange}
-          value={selectedFile}
+          // value={selectedFile.name}
         >
         </input>
         <div>
@@ -56,7 +56,7 @@ export default function CustomModal (props) {
 
     } else if (props.type === 'NEW_FILE') {
 
-      console.log(newFileInput);
+      console.log(selectedFile);
       props.onConfirmModal(selectedFile);
       setSelectedFile('');
 
@@ -79,7 +79,7 @@ export default function CustomModal (props) {
   function newFileChange(e){
     e.stopPropagation();
     console.log('newFileChnage', e.target.files[0]);
-    // setSelectedFile(e.target.files[0]);
+    setSelectedFile(e.target.files[0]);
 
   }
 
