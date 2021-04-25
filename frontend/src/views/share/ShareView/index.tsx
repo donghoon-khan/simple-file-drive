@@ -486,32 +486,37 @@ const ShareView = () => {
       console.dir('이동 구현필요', currentNode);
       console.dir(currentNode);
 
-      let promises: any[] = [];
-      let result:any[] =[]
-      files.forEach(file => {
+      if(files.filter(file => file.active && file.type !=='directory').length > 0){
 
-        //이도에구현
+
+        let promises: any[] = [];
+        let result:any[] =[]
+        files.forEach(file => {
   
-        if(file.active && file.type !== 'directory'){
-
-          promises.push(
-          axios.put(`/file/${path.join('')}/${file.name}?force=false&target=${path.join('')}/${currentNode.innerText}/${file.name}`).then(response =>{
-
-            result.push(response);
-
-          }));
-
-        }
+          //이도에구현
+    
+          if(file.active && file.type !== 'directory'){
   
-      })
+            promises.push(
+            axios.put(`/file/${path.join('')}/${file.name}?force=false&target=${path.join('')}/${currentNode.innerText}/${file.name}`).then(response =>{
+  
+              result.push(response);
+  
+            }));
+  
+          }
+    
+        })
+  
+        Promise.all(promises).then(() => {
+  
+          console.log(result)
+          alert(`${result.length}개 의 파일 중 ${result.filter(res => res.status===200).length} 개 파일을 이동했습니다`);
+          findData(path.join(''));
+  
+        });
 
-      Promise.all(promises).then(() => {
-
-        console.log(result)
-        alert(`${result.length}개 의 파일 중 ${result.filter(res => res.status===200).length} 개 파일을 이동했습니다`);
-        findData(path.join(''));
-
-      });
+      }
       
 
     }
