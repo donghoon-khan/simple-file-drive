@@ -486,17 +486,32 @@ const ShareView = () => {
       console.dir('이동 구현필요', currentNode);
       console.dir(currentNode);
 
+      let promises: any[] = [];
+      let result:any[] =[]
       files.forEach(file => {
 
         //이도에구현
   
         if(file.active && file.type !== 'directory'){
 
-          axios.put(`/file/${file.name}?force=false&target=${currentNode.innerText}/${file.name}`);
+          promises.push(
+          axios.put(`/file/${path.join('')}/${file.name}?force=false&target=${path.join('')}/${currentNode.innerText}/${file.name}`).then(response =>{
+
+            result.push(response);
+
+          }));
 
         }
   
       })
+
+      Promise.all(promises).then(() => {
+
+        console.log(result)
+        alert(`${result.length}개 의 파일 중 ${result.filter(res => res.status===200).length} 개 파일을 이동했습니다`);
+        findData(path.join(''));
+
+      });
       
 
     }
