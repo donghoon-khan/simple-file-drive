@@ -212,13 +212,14 @@ const ShareView = () => {
       console.log('modalType===NEW_FILE', data);
       var frm = new FormData();
       frm.append('file', data);
-      axios.post(`/file?force=false`, frm, {
+      axios.post(`/file${path.join('')}?force=false`, frm, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }).then((e) => {
 
         alert('파일을 추가했습니다.');
+        findData(path.join(''));
 
       })
         .catch((e) => {
