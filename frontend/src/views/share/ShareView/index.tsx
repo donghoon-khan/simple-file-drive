@@ -483,7 +483,21 @@ const ShareView = () => {
 
     if(currentNode && currentNode.childNodes[0].currentSrc && currentNode.childNodes[0] && (typeof currentNode.childNodes[0].currentSrc === 'string') && currentNode.childNodes[0].currentSrc.includes('directory')){
 
-      console.log('이동 구현필요');
+      console.dir('이동 구현필요', currentNode);
+      console.dir(currentNode);
+
+      files.forEach(file => {
+
+        //이도에구현
+  
+        if(file.active && file.type !== 'directory'){
+
+          axios.put(`/file/${file.name}?force=false&target=${currentNode.innerText}/${file.name}`);
+
+        }
+  
+      })
+      
 
     }
     //currentNode가directory가 아니라면 그냥끝 directory라면 폴더에 넣는다 
@@ -533,6 +547,7 @@ const ShareView = () => {
 
         if (activeNode.className.includes('active') && activeNode.innerText === file.name) {
 
+        
           file.active = true;
 
         } 
