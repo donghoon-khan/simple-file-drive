@@ -123,7 +123,7 @@ const ShareView = () => {
 
           if (index >= clickStartIndex && index <= idx) {
 
-            console.log(index);
+            
             file.active = true;
 
           }
@@ -209,7 +209,7 @@ const ShareView = () => {
     } else if (modalType === 'NEW_FILE') {
 
       //파일업로드 구현
-      console.log('modalType===NEW_FILE', data);
+      
       var frm = new FormData();
       frm.append('file', data);
       axios.post(`/file${path.join('')}?force=false`, frm, {
@@ -254,8 +254,6 @@ const ShareView = () => {
 
       {
 
-        console.log(item, pathName);
-
         if (item === pathName) return true;
 
       }
@@ -265,7 +263,6 @@ const ShareView = () => {
     if (pathIndex !== -1) {
 
       const newPath = path.slice(0, pathIndex + 1);
-      console.log(newPath);
       setPath(newPath);
       findData(newPath.join(''));
 
@@ -276,7 +273,6 @@ const ShareView = () => {
   function onMouseDown(e: any) {
 
     e.stopPropagation();
-    console.log(document.elementFromPoint(e.clientX, e.clientY));
     const pointElement: any = document.elementFromPoint(e.clientX, e.clientY);
     setContextOpen(false);
 
@@ -423,7 +419,6 @@ const ShareView = () => {
 
       let x = e.clientX;
       let y = e.clientY;
-      console.log('mouseMove true');
       if( dragRef && dragRef.current){
 
         dragRef.current.style.position = 'fixed';
@@ -483,9 +478,6 @@ const ShareView = () => {
 
     if(currentNode && currentNode.childNodes[0].currentSrc && currentNode.childNodes[0] && (typeof currentNode.childNodes[0].currentSrc === 'string') && currentNode.childNodes[0].currentSrc.includes('directory')){
 
-      console.dir('이동 구현필요', currentNode);
-      console.dir(currentNode);
-
       if(files.filter(file => file.active && file.type !=='directory').length > 0){
 
 
@@ -510,7 +502,6 @@ const ShareView = () => {
   
         Promise.all(promises).then(() => {
   
-          console.log(result)
           alert(`${result.length}개 의 파일 중 ${result.filter(res => res.status===200).length} 개 파일을 이동했습니다`);
           findData(path.join(''));
   
@@ -529,7 +520,6 @@ const ShareView = () => {
         files.forEach(file => {
   
           //이도에구현
-          console.log('currentNode.innerText', currentNode.innerText);
           if(file.active && file.type !== 'directory'){
   
             promises.push(
@@ -554,7 +544,6 @@ const ShareView = () => {
       }
 
     }
-    //currentNode가directory가 아니라면 그냥끝 directory라면 폴더에 넣는다 
 
     setActiveFiles(e);
     
@@ -594,13 +583,9 @@ const ShareView = () => {
     
     Array.prototype.forEach.call(activeNodes, activeNode => {
 
-      console.dir( activeNode );
       newFiles.forEach(file => {
 
-        console.log(activeNode.className, activeNode.innerText, file.name);
-
         if (activeNode.className.includes('active') && activeNode.innerText === file.name) {
-
         
           file.active = true;
 
@@ -661,13 +646,8 @@ const ShareView = () => {
 
   function onDownLoadClick() {
 
-    
-
     const activeFiles = files.filter(file => file.active);
-
     
-    console.log(activeFiles, path);
-
     activeFiles.forEach((file) => {
 
       if (file.type !== 'directory') {
@@ -763,6 +743,9 @@ const ShareView = () => {
   function dragStart(e : any){
 
     console.log('dragStart', e);
+    e.preventDefault();
+    e.stopPropagation();
+
     return false;
 
   }
