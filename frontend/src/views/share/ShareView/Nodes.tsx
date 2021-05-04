@@ -103,6 +103,7 @@ class Nodes extends Component<Props, State> {
   render() {
     const { files } = this.props;
     console.log(this.state.contextOpen);
+    console.log('paths', this.props.path);
     return (
       <NodesBlock ref={(ref) => { this.setNodesRef(ref) }}>
         {

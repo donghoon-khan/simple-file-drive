@@ -387,7 +387,7 @@ const ShareView = () => {
       }
 
       const nodes = document.getElementsByClassName('Node');
-      //신나게 Node를 돌면서 드래그 박스안에 있는지 확인한다.
+      
       Array.prototype.forEach.call(nodes, (node, idx) => {
 
         if (boxIntersects(
@@ -423,7 +423,7 @@ const ShareView = () => {
 
       let x = e.clientX;
       let y = e.clientY;
-
+      console.log('mouseMove true');
       if( dragRef && dragRef.current){
 
         dragRef.current.style.position = 'fixed';
@@ -498,7 +498,7 @@ const ShareView = () => {
           if(file.active && file.type !== 'directory'){
   
             promises.push(
-            axios.put(`/file/${path.join('')}/${file.name}?force=false&target=${path.join('')}/${currentNode.innerText}/${file.name}`).then(response =>{
+            axios.put(`/file/${path.join('')}${file.name}?force=false&target=${path.join('')}/${currentNode.innerText}/${file.name}`).then(response =>{
   
               result.push(response);
   
@@ -518,6 +518,40 @@ const ShareView = () => {
 
       }
       
+
+    } else if(currentNode && currentNode.childNodes[0].currentSrc && currentNode.childNodes[0] && (typeof currentNode.childNodes[0].currentSrc === 'string') && currentNode.childNodes[0].currentSrc.includes('prev')){
+
+      if(files.filter(file => file.active && file.type !=='directory').length > 0){
+
+
+        let promises: any[] = [];
+        let result:any[] =[]
+        files.forEach(file => {
+  
+          //이도에구현
+          console.log('currentNode.innerText', currentNode.innerText);
+          if(file.active && file.type !== 'directory'){
+  
+            promises.push(
+            axios.put(`/file${path.join('')}/${file.name}?force=false&target=${path.slice(0, path.length-1).join('')}/${currentNode.innerText}/${file.name}`).then(response =>{
+  
+              result.push(response);
+  
+            }));
+  
+          }
+    
+        })
+  
+        Promise.all(promises).then(() => {
+  
+          console.log(result)
+          alert(`${result.length}개 의 파일 중 ${result.filter(res => res.status===200).length} 개 파일을 이동했습니다`);
+          findData(path.join(''));
+  
+        });
+
+      }
 
     }
     //currentNode가directory가 아니라면 그냥끝 directory라면 폴더에 넣는다 
@@ -726,6 +760,13 @@ const ShareView = () => {
 
   }
 
+  function dragStart(e : any){
+
+    console.log('dragStart', e);
+    return false;
+
+  }
+
   return (
     <>
       <Card>
@@ -740,6 +781,7 @@ const ShareView = () => {
                 onMouseMove={onMouseMove} 
                 onMouseUp={onMouseUp}
                 onContextMenu={mainContextMenu}
+                onDragStart={dragStart}
               >
                 <nav>
                   <Button variant="outlined" color="secondary" onClick={onClickNewFile}><CreateNewFolder/></Button>
