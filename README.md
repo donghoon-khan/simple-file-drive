@@ -34,7 +34,7 @@ $ docker build -t simple-file-drive .
 
 ## Getting Started
 
-You can run the SimpleFileDrive WAR directly, via Docker, or in Kubernetes.
+You can run the SimpleFileDrive WAR directly, via Docker
 
 ### Running from WAR
 
